@@ -1,10 +1,19 @@
 <!DOCTYPE html>
-<html>
+
+<html xmlns:th="http://www.thymeleaf.org">
    <head>
-      <meta charset = "ISO-8859-1" />
+      <meta charset = "UTF-8" />
       <title>Spring Boot Application</title>
    </head>
    <body>
-      <h4>Welcome to Thymeleaf Spring Boot web application</h4>
+      
+      <th:block th:include="/_menu"></th:block>
+       
+      <h3>Spring Boot File Upload Example</h3>
+       
+      <ul>
+        <li><a th:href="@{/uploadOneFile}">Upload One File Example</a></li>
+      </ul>
+       
    </body>
 </html>
