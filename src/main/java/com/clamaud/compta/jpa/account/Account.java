@@ -3,12 +3,14 @@ package com.clamaud.compta.jpa.account;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 @Entity
 public class Account {
 
 	@Id
+	@GeneratedValue
 	private Integer id;
 	
 	private Date date;
@@ -16,6 +18,15 @@ public class Account {
 	private String label;
 	
 	private double amount;
+
+	
+	
+	public Account(Date date, String label, double amount) {
+		super();
+		this.date = date;
+		this.label = label;
+		this.amount = amount;
+	}
 
 	public Date getDate() {
 		return date;

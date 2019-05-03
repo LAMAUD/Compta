@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +16,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.UploadForm;
+import com.clamaud.compta.jpa.repository.AccountRepository;
+import com.clamaud.compta.jpa.service.ImportService;
 
 
 @Controller
 public class ComptaImportController {
+	
+	@Autowired
+	private ImportService importService;
+	
+	@Autowired
+	private AccountRepository accountRepository;
 	
 	@GetMapping("/index")
 	public String index() {
@@ -74,15 +84,25 @@ public class ComptaImportController {
 	            try {
 	               // Create the file at server
 	               File serverFile = new File(uploadRootDir.getAbsolutePath() + File.separator + name);
-	 
+	               
+	               
 	               BufferedOutputStream stream = new BufferedOutputStream(new FileOutputStream(serverFile));
 	               stream.write(fileData.getBytes());
 	               stream.close();
 	               //
+	               List<Account> accounts = importService.getAccountsFromFile(serverFile);
+	               for (Account account : accounts) {
+	            	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(account.getDate(), account.getLabel(), account.getAmount());
+	            	   if (accountBdd == null) {
+	            		   accountRepository.save(account);
+	            	   }
+	               }
+	               
 	               uploadedFiles.add(serverFile);
 	               System.out.println("Write file: " + serverFile);
 	            } catch (Exception e) {
 	               System.out.println("Error Write file: " + name);
+	               System.out.println("Message: " + e.getMessage());
 	               failedFiles.add(name);
 	            }
 	         }
