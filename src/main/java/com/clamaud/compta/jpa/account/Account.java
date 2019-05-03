@@ -7,15 +7,47 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Transient;
 
+import org.apache.commons.lang3.StringUtils;
+
 @Entity
 public class Account {
 
 	public enum AccountType {
 		
-		VIREMENT,
-		ACHAT,
-		CREDIT,
-		CHEQUE;
+		VIREMENT("VIREMENT", 999),
+		ACHAT("ACHAT CB", 15),
+		CREDIT("CREDIT CARTE BANCAIRE", 16),
+		CHEQUE("CHEQUE", 11),
+		REMISE_COMMERCIALE("REMISE COMMERCIALE", 8),
+		PRELEVEMENT("PRELEVEMENT", 999),
+		FORFAIT_TRIMESTRIEL("MINIMUM FORFAITAIRE TRIMESTRIEL D UTILISATION DU DECOUVERT", 0),
+		AVANTAGE_CREDIT_IMMOBILIER("AVANTAGE CREDIT IMMOBILIER SUR COTISATION FORMULE DE COMPTE", 0),
+		COTISATION_TRIMESTRIELLE("COTISATION TRIMESTRIELLE DE VOTRE FORMULE DE COMPTE", 0);
+		
+		private String label;
+		
+		private int codeLength;
+
+		private AccountType(String label, int codeLength) {
+			this.label = label;
+			this.codeLength = codeLength;
+		}
+		
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+
+		public int getCodeLength() {
+			return codeLength;
+		}
+
+		public void setCodeLength(int codeLength) {
+			this.codeLength = codeLength;
+		}
 		
 	}
 	
@@ -55,7 +87,6 @@ public class Account {
 	
 	private String user;
 
-	@Transient
 	private String label;
 	
 	
@@ -63,20 +94,32 @@ public class Account {
 		super();
 		this.date = date;
 		this.amount = amount;
+		this.label = label;
 		
 		for (AccountType type : AccountType.values()) {
-			if (label.contains(type.toString())) {
-				this.type = type.toString();
+			if (label.contains(type.getLabel())) {
+				this.type = type.getLabel();
+				System.out.println(label);
+				int startSubstring = label.indexOf(type.getLabel()) + type.getLabel().length();
+				System.out.println(startSubstring);
+				if (type.getCodeLength() < 30) {
+					this.code = label.substring(startSubstring, startSubstring + type.getCodeLength());
+				} else {
+					this.code = label.substring(startSubstring, label.indexOf(":"));
+				}
+				continue;
 			}
 		}
 		
 		for (User user : User.values()) {
-			if (type.equals(AccountType.ACHAT)) {
+			if (StringUtils.equalsIgnoreCase(type, AccountType.ACHAT.getLabel())) {
 				if (label.contains(user.getCode())) {
 					this.user = user.toString();
 				}
 			}
 		}
+		
+		
 		
 	}
 

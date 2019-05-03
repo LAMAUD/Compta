@@ -103,6 +103,7 @@ public class ComptaImportController {
 	            } catch (Exception e) {
 	               System.out.println("Error Write file: " + name);
 	               System.out.println("Message: " + e.getMessage());
+	               e.printStackTrace();
 	               failedFiles.add(name);
 	            }
 	         }
