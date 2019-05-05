@@ -90,6 +90,11 @@ public class Account {
 	private String label;
 	
 	
+	
+	public Account() {
+		super();
+	}
+
 	public Account(Date date, String label, double amount) {
 		super();
 		this.date = date;

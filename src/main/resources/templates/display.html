@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+   <head>
+      <meta charset="UTF-8">
+      <title>Upload One File</title>
+   </head>
+   
+   <body>
+       
+      <table>
+	    <thead>
+	        <tr>
+	            <th> Date </th>
+	            <th> Montant </th>
+	            <th> Type </th>
+	            <th> Code </th>
+	            <th> Utilisateur </th>
+	        </tr>
+	    </thead>
+	    <tbody>
+	    <tr th:if="${accounts.empty}">
+	            <td colspan="2"> No Books Available </td>
+	        </tr>
+	        <tr th:each="account : ${accounts}">
+	            <td><span th:text="${#dates.format(account.date,'dd MMMM yyyy')}"> Date </span></td>
+	            <td><span th:text="${account.amount}"> Montant </span></td>
+	            <td><span th:text="${account.type}"> Type </span></td>
+	            <td><span th:text="${account.code}"> Code </span></td>
+	            <td><span th:text="${account.user}"> Utilisateur </span></td>
+	        </tr>
+	    </tbody>
+	</table>
+       
+   </body>
+</html>
