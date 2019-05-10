@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+   <div th:insert="menu :: head"></div> 
+   
+   <body>
+       
+      <div th:insert="menu :: navbar"></div> 
+       
+      <h3>Associer les catégories</h3>
+      
+      <form action="#" th:action="@{/updateAccount}" th:object="${account}" method="post">
+    	<p>Id : <input type="text" th:field="*{id}" /></p>
+        <p>Amount : <input type="text" th:field="*{amount}" /></p>
+        <p>Code : <input type="text" th:field="*{code}" /></p>
+        <p>Type : <input type="text" th:field="*{type}" /></p>
+	    <p>Catégorie : 
+	    <select th:field="*{category}">
+	    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
+	            th:value="${state}"
+	            th:text="${state}">
+	    	</option>
+		</select>
+		</p>
+        <p>Sous Catégorie : 
+        <select th:field="*{subCategory}">
+	    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.SubCategory).values()}"
+	            th:value="${state}"
+	            th:text="${state}">
+	    	</option>
+		</select>
+        </p>
+        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    </form>
+       
+   
+       
+   </body>
+</html>

@@ -3,9 +3,11 @@ package com.clamaud.compta.jpa.account;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Transient;
+import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -89,6 +91,11 @@ public class Account {
 
 	private String label;
 	
+	@Enumerated(EnumType.STRING)
+	private Category category;
+	
+	@Enumerated(EnumType.STRING)
+	private SubCategory subCategory;
 	
 	
 	public Account() {
@@ -155,6 +162,11 @@ public class Account {
 	public Integer getId() {
 		return id;
 	}
+	
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 
 	public String getType() {
 		return type;
@@ -178,6 +190,22 @@ public class Account {
 
 	public void setUser(String user) {
 		this.user = user;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public SubCategory getSubCategory() {
+		return subCategory;
+	}
+
+	public void setSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
 	}
 	
 }
