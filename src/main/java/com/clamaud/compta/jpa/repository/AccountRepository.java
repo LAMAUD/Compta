@@ -11,6 +11,6 @@ public interface AccountRepository extends CrudRepository<Account, Integer> {
 
 	Account findByDateAndLabelAndAmount(Date date, String label, double amount);
 	
-	
+	public List<Account> findAllByOrderByDateAsc();
 
 }

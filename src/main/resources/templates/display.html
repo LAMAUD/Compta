@@ -7,26 +7,34 @@
        
       <div th:insert="menu :: navbar"></div> 
        
-      <table>
+      <table class="table">
 	    <thead>
 	        <tr>
-	            <th> Date </th>
-	            <th> Montant </th>
-	            <th> Type </th>
-	            <th> Code </th>
-	            <th> Utilisateur </th>
+	        	<th scope="col"> id </th>
+	            <th scope="col"> Date </th>
+	            <th scope="col"> Montant </th>
+	            <th scope="col"> Type </th>
+	            <th scope="col"> Code </th>
+	            <th scope="col"> Utilisateur </th>
+	            <th scope="col"> Catégorie </th>
+	            <th scope="col"> Sous catégorie </th>
+	            <th scope="col"> Solde </th>
 	        </tr>
 	    </thead>
 	    <tbody>
 	    <tr th:if="${accounts.empty}">
-	            <td colspan="2"> No Books Available </td>
+	            <td colspan="2"> Pas de compte importé </td>
 	        </tr>
 	        <tr th:each="account : ${accounts}">
+	        	<td><span th:text="${account.id}"> Id </span></td>
 	            <td><span th:text="${#dates.format(account.date,'dd MMMM yyyy')}"> Date </span></td>
 	            <td><span th:text="${account.amount}"> Montant </span></td>
 	            <td><span th:text="${account.type}"> Type </span></td>
 	            <td><span th:text="${account.code}"> Code </span></td>
 	            <td><span th:text="${account.user}"> Utilisateur </span></td>
+	            <td><span th:text="${account.category}"> Catégorie </span></td>
+	            <td><span th:text="${account.subCategory}"> Sous catégorie </span></td>
+	            <td><span th:text="${account.balance}"> Solde </span></td>
 	        </tr>
 	    </tbody>
 	</table>
