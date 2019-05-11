@@ -7,9 +7,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Account {
@@ -79,6 +79,7 @@ public class Account {
 	@GeneratedValue
 	private Integer id;
 	
+	@DateTimeFormat (pattern="dd-MM-yyyy") 
 	private Date date;
 	
 	private double amount;

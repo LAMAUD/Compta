@@ -5,10 +5,13 @@ import java.util.Date;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 public class AccountDTO {
 	
 	private Integer id;
 	
+	@DateTimeFormat (pattern="dd-MM-yyyy") 
 	private Date date;
 	
 	private double amount;

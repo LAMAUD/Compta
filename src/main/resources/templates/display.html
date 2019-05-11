@@ -6,11 +6,11 @@
    <body>
        
       <div th:insert="menu :: navbar"></div> 
-       
+   
+   <div class ="col-lg-10 offset-lg-1">  
       <table class="table">
 	    <thead>
 	        <tr>
-	        	<th scope="col"> id </th>
 	            <th scope="col"> Date </th>
 	            <th scope="col"> Montant </th>
 	            <th scope="col"> Type </th>
@@ -26,7 +26,6 @@
 	            <td colspan="2"> Pas de compte importé </td>
 	        </tr>
 	        <tr th:each="account : ${accounts}">
-	        	<td><span th:text="${account.id}"> Id </span></td>
 	            <td><span th:text="${#dates.format(account.date,'dd MMMM yyyy')}"> Date </span></td>
 	            <td><span th:text="${account.amount}"> Montant </span></td>
 	            <td><span th:text="${account.type}"> Type </span></td>
@@ -38,6 +37,6 @@
 	        </tr>
 	    </tbody>
 	</table>
-       
+    </div>  
    </body>
 </html>

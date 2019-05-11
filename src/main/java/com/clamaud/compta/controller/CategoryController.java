@@ -6,6 +6,7 @@ import java.util.stream.StreamSupport;
 
 import javax.transaction.Transactional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,10 +14,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
+import com.clamaud.compta.jpa.account.Category;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 
 @Controller
@@ -47,8 +51,29 @@ public class CategoryController {
 			
 		}
 		
-		
+		model.addAttribute("category", Category.MAISON);
 		model.addAttribute("account", accountToSend);
+		return "category";
+	}
+	
+	@GetMapping("/get")
+	public String getCategory(@RequestParam("category") String category, Model model) {
+		
+		
+		System.out.println(category);
+		Category catego = null;
+		for (Category categoryEnum : Category.values()) {
+			if (StringUtils.equals(categoryEnum.toString(), category)) {
+				catego = categoryEnum;
+				break;
+			}
+			
+		}
+		model.addAttribute("category", catego);
+		
+		
+		
+		
 		return "category";
 	}
 	
@@ -60,6 +85,7 @@ public class CategoryController {
 		account.setCategory(accountDTO.getCategory());
 		account.setSubCategory(accountDTO.getSubCategory());
 		accountRepository.save(account);
+		
 		
 		return new RedirectView("/category");
 	}
