@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+   <div th:insert="menu :: head"></div> 
+   
+   <body>
+       
+      <div th:insert="menu :: navbar"></div> 
+      
+   <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
+   
+   <div th:fragment="form" class ="col-lg-10 offset-lg-1">
+      	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
+		   <div class ="jumbotron">
+			   <div class =" row col-lg-12">
+				    <div class ="col-lg-4 offset-lg-2 text-center">
+					    <p>Catégorie : 
+					    <select id = "category" th:field="*{category}" onchange="ajax()">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
+					            th:value="${state}"
+					            th:text="${state}">
+					    	</option>
+						</select>
+						</p>
+					</div>
+					<div class ="col-lg-4 text-center">
+				        <p>Sous Catégorie : 
+				        <select th:field="*{subCategory}">
+				        	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.SubCategory).values()}"
+					            th:value="${state}"
+					            th:text="${state}">
+					    	</option>
+						</select>
+				        </p>
+			        </div>
+		        </div>
+		        <div class =" row col-lg-12">
+				    <div class ="col-lg-4 offset-lg-2 text-center">
+				    	<p>Du : <input type="text" th:field="*{dateFrom}" /></p>
+				    </div>
+				    <div class ="col-lg-4 text-center">
+				    	<p>Au : <input type="text" th:field="*{dateTo}" /></p>
+				    </div>
+				</div>
+		        <div class ="row">
+		        	<div class ="col-lg-12 text-center">
+		        		<p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+		        	</div>
+		        </div>
+	        </div>
+	        
+    	</form>	
+   </div>
+   
+   
+   <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
+      	<table class="table">
+		    <thead>
+		        <tr>
+		            <th scope="col"> Date </th>
+		            <th scope="col"> Montant </th>
+		            <th scope="col"> Type </th>
+		            <th scope="col"> Code </th>
+		            <th scope="col"> Utilisateur </th>
+		            <th scope="col"> Catégorie </th>
+		            <th scope="col"> Sous catégorie </th>
+		            <th scope="col"> Solde </th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    <tr th:if="${accounts.empty}">
+		            <td colspan="2"> Pas de compte importé </td>
+		        </tr>
+		        <tr th:each="account : ${accounts}">
+		            <td><span th:text="${#dates.format(account.date,'dd MMMM yyyy')}"> Date </span></td>
+		            <td><span th:text="${account.amount}"> Montant </span></td>
+		            <td><span th:text="${account.type}"> Type </span></td>
+		            <td><span th:text="${account.code}"> Code </span></td>
+		            <td><span th:text="${account.user}"> Utilisateur </span></td>
+		            <td><span th:text="${account.category}"> Catégorie </span></td>
+		            <td><span th:text="${account.subCategory}"> Sous catégorie </span></td>
+		            <td><span th:text="${account.balance}"> Solde </span></td>
+		        </tr>
+		    </tbody>
+		</table>
+    </div>  
+   </body>
+</html>

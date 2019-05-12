@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+   <div th:insert="menu :: head"></div> 
+   
+   <body>
+       
+      <div th:insert="menu :: navbar"></div> 
+       
+      <h3>Upload One File:</h3>
+       
+      <!-- MyUploadForm -->
+       
+      <form th:object="${uploadForm}" method="POST"
+         action="" enctype="multipart/form-data">
+         Description:
+         <br>
+         <input th:field="*{description}" style="width:300px;"/>                
+         <br/><br/>  
+         File to upload: <input th:field="*{fileDatas}" type="file"/>
+         <br />  
+         <input type="submit" value="Upload">
+      </form>
+       
+   </body>
+</html>
