@@ -6,6 +6,8 @@
    <body>
        
       <div th:insert="menu :: navbar"></div> 
+      
+   <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
    
    <div th:fragment="form" class ="col-lg-10 offset-lg-1">
       	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">

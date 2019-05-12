@@ -1,11 +1,9 @@
 package com.clamaud.compta.controller;
 
-import java.text.DecimalFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.view.RedirectView;
 
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
@@ -38,8 +35,11 @@ public class ComptaDisplayController {
 		
 		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
 		
+		Date date = accountRepository.findLatestDateAccount();
+		
 		AccountCriteria criteria = new AccountCriteria();
 		
+		model.addAttribute("date", date);
 		model.addAttribute("criteria", criteria);
 		model.addAttribute("accounts", accountsDTO);
 		return "display";
@@ -50,9 +50,10 @@ public class ComptaDisplayController {
 	public String searchAccounts (Model model, @ModelAttribute AccountCriteria criteria) {
 		
 		Iterable<Account> accounts = accountRepository.multiCriteriaSearch(criteria);
-		
+		Date date = accountRepository.findLatestDateAccount();
 		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
 		
+		model.addAttribute("date", date);
 		model.addAttribute("accounts", accountsDTO);
 		model.addAttribute("criteria", criteria);
 		
@@ -74,7 +75,7 @@ public class ComptaDisplayController {
 		
 		for (AccountDTO account : accountsDTO) {
 			balance += account.getAmount();
-			account.setBalance(Math.round(balance * 100) / 100);
+			account.setBalance(Math.round(balance * 100) / 100.00);
 		}
 		return accountsDTO;
 	}

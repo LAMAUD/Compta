@@ -19,7 +19,10 @@ public enum SubCategory {
 	DIVERS(Category.VACANCES.toString()),
 	CEDRIC(Category.CREDIT.toString()),
 	MATHILDE(Category.CREDIT.toString()),
+	DEBUT(Category.CREDIT.toString()),
 	AGIO(Category.FRAIS_BANCAIRE.toString()),
+	ANNUELS(Category.FRAIS_BANCAIRE.toString()),
+	TRIMESTRIELS(Category.FRAIS_BANCAIRE.toString()),
 	ESPECE(Category.ESPECE.toString());
 	
 	private String category;

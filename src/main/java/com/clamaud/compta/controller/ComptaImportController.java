@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,13 +99,15 @@ public class ComptaImportController {
 	            	   
 	            	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(account.getDate(), account.getLabel(), account.getAmount());
 	            	   if (accountBdd == null) {
-	            		   List<Account> accountsfindByCode = accountRepository.findByCode(account.getCode());
-	            		   if (accountsfindByCode != null && !accountsfindByCode.isEmpty()) {
-	            			   Category category = accountsfindByCode.get(0).getCategory();
-	            			   SubCategory subCategory = accountsfindByCode.get(0).getSubCategory();
-	            			   account.setCategory(category);
-	            			   account.setSubCategory(subCategory);
-	            		   }
+	            		   if (!StringUtils.isEmpty(account.getCode())) {
+	            			   List<Account> accountsfindByCode = accountRepository.findByCode(account.getCode());
+	            			   if (accountsfindByCode != null && !accountsfindByCode.isEmpty()) {
+	            				   Category category = accountsfindByCode.get(0).getCategory();
+	            				   SubCategory subCategory = accountsfindByCode.get(0).getSubCategory();
+	            				   account.setCategory(category);
+	            				   account.setSubCategory(subCategory);
+	            			   }
+						}
 	            		   accountRepository.save(account);
 	            	   }
 	               }

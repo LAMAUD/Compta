@@ -11,7 +11,7 @@ public class AccountDTO {
 	
 	private Integer id;
 	
-	@DateTimeFormat (pattern="dd-MM-yyyy") 
+	@DateTimeFormat (pattern="dd/MM/yyyy") 
 	private Date date;
 	
 	private double amount;
