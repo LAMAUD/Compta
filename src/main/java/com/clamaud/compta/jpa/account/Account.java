@@ -118,7 +118,11 @@ public class Account {
 				if (type.getCodeLength() < 30) {
 					this.code = label.substring(startSubstring, startSubstring + type.getCodeLength());
 				} else {
-					this.code = label.substring(startSubstring, label.indexOf(":"));
+					if (label.contains(":")) {
+						this.code = label.substring(startSubstring, label.indexOf(":"));
+					} else {
+						this.code = label.substring(startSubstring, 30);
+					}
 				}
 				continue;
 			}

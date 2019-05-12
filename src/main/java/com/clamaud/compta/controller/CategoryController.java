@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.clamaud.compta.jpa.account.Account;
@@ -50,17 +50,18 @@ public class CategoryController {
 			}
 			
 		}
-		
+		if (accountToSend == null) {
+			return "index";
+		}
 		model.addAttribute("category", Category.MAISON);
 		model.addAttribute("account", accountToSend);
 		return "category";
 	}
 	
 	@GetMapping("/get")
-	public String getCategory(@RequestParam("category") String category, Model model) {
+	public String getCategory(@RequestParam("category") String category, @RequestParam("id") Integer id, Model model) {
 		
 		
-		System.out.println(category);
 		Category catego = null;
 		for (Category categoryEnum : Category.values()) {
 			if (StringUtils.equals(categoryEnum.toString(), category)) {
@@ -69,12 +70,13 @@ public class CategoryController {
 			}
 			
 		}
+		Account account = accountRepository.findById(id).get();
+		
 		model.addAttribute("category", catego);
+		model.addAttribute("account", account);
+		account.setCategory(catego);
 		
-		
-		
-		
-		return "category";
+		return "category :: form";
 	}
 	
 	@PostMapping("/updateAccount")

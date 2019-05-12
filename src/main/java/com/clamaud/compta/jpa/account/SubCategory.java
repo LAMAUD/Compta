@@ -9,12 +9,17 @@ public enum SubCategory {
 	PRET(Category.MAISON.toString()),
 	EAU(Category.MAISON.toString()),
 	ELECTRICITE(Category.MAISON.toString()),
+	IMPOT(Category.MAISON.toString()),
+	CREDIT_LOGEMENT(Category.MAISON.toString()),
+	ASSURANCE(Category.MAISON.toString()),
 	COURSES(Category.NOURRITURE.toString()),
 	RESTAURANT(Category.NOURRITURE.toString()),
 	ROCK(Category.LOISIRS.toString()),
 	AUTRE(Category.LOISIRS.toString()),
+	DIVERS(Category.VACANCES.toString()),
 	CEDRIC(Category.CREDIT.toString()),
-	MATHILDE(Category.CREDIT.toString());
+	MATHILDE(Category.CREDIT.toString()),
+	AGIO(Category.FRAIS_BANCAIRE.toString());
 	
 	private String category;
 	

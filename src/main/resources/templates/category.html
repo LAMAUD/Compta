@@ -9,47 +9,47 @@
        
       <h3>Associer les catégories</h3>
       
-      
-      <form action="#" th:action="@{/updateAccount}" th:object="${account}" method="post">
-    	<p>id : <input type="text" th:field="*{id}" /></p>
-    	<p>Date : <input type="text" th:field="*{date}" /></p>
-        <p>Amount : <input type="text" th:field="*{amount}" /></p>
-        <p>Code : <input type="text" th:field="*{code}" /></p>
-        <p>Type : <input type="text" th:field="*{type}" /></p>
-        <p>Dépensier : <input type="text" th:field="*{user}" /></p>
-	    <p>Catégorie : 
-	    <select id = "category" th:field="*{category}">
-	    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
-	            th:value="${state}"
-	            th:text="${state}">
-	    	</option>
-		</select>
-		</p>
-        <p>Sous Catégorie : 
-        <select th:field="*{subCategory}">
-	    	<option th:each="state,rowStat : ${T(com.clamaud.compta.jpa.account.SubCategory).values().?[category == '__${category}__']}"
-	            th:value="${state}"
-	            th:text="${state}">
-	    	</option>
-		</select>
-        </p>
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-    </form>
-       
+      <div th:fragment = "form">
+      	<form id="accountForm" action="#" th:action="@{/updateAccount}" th:object="${account}" method="post">
+	    	<p>id : <input id = "id" type="text" th:field="*{id}" /></p>
+	    	<p>Date : <input type="text" th:field="*{date}" /></p>
+	        <p>Amount : <input type="text" th:field="*{amount}" /></p>
+	        <p>Code : <input type="text" th:field="*{code}" /></p>
+	        <p>Type : <input type="text" th:field="*{type}" /></p>
+	        <p>Dépensier : <input type="text" th:field="*{user}" /></p>
+		    <p>Catégorie : 
+		    <select id = "category" th:field="*{category}" onchange="ajax()">
+		    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
+		            th:value="${state}"
+		            th:text="${state}">
+		    	</option>
+			</select>
+			</p>
+	        <p>Sous Catégorie : 
+	        <select th:field="*{subCategory}">
+		    	<option th:each="state,rowStat : ${T(com.clamaud.compta.jpa.account.SubCategory).values().?[category == '__${category}__']}"
+		            th:value="${state}"
+		            th:text="${state}">
+		    	</option>
+			</select>
+	        </p>
+	        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+    	</form>	
+       </div>
 	   <script>
 		
-		    $("#category").change(function() {
-		    	console.log("change");
-		    	$.ajax({
-		    		  method: "GET",
-		    		  url: "get",
-		    		  data: { category: $("#category").val()}
-		    		})
-		    		  .done(function( msg ) {
-		    		    alert( "Data Saved: " + msg );
-		    		  });
-		    	
-			});
+	   function ajax()
+	   {
+		   $.ajax({
+	    		  method: "GET",
+	    		  url: "get",
+	    		  data: { category: $("#category").val(), id: $("#id").val()},
+	    		  success:function(result) {
+	    		        $("#accountForm").append(result);
+		    			 $("#accountForm").html(result);
+	    		    }
+	    		});
+	   }
 	   
 	   
 		</script>

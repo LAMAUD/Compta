@@ -8,7 +8,8 @@ public enum Category {
 	NOURRITURE,
 	LOISIRS,
 	VACANCES,
-	CREDIT;
+	CREDIT,
+	FRAIS_BANCAIRE;
 	
 	
 }
