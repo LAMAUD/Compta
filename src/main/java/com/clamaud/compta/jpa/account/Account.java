@@ -24,6 +24,8 @@ public class Account {
 		PRELEVEMENT("PRELEVEMENT", 999),
 		FORFAIT_TRIMESTRIEL("MINIMUM FORFAITAIRE TRIMESTRIEL D UTILISATION DU DECOUVERT", 0),
 		AVANTAGE_CREDIT_IMMOBILIER("AVANTAGE CREDIT IMMOBILIER SUR COTISATION FORMULE DE COMPTE", 0),
+		RETRAIT("CARTE X", 0),
+		COTISATION_ANNUELLE("COTISATION ANNUELLE CARTE VISA CLASSIC",0),
 		COTISATION_TRIMESTRIELLE("COTISATION TRIMESTRIELLE DE VOTRE FORMULE DE COMPTE", 0);
 		
 		private String label;
@@ -79,7 +81,7 @@ public class Account {
 	@GeneratedValue
 	private Integer id;
 	
-	@DateTimeFormat (pattern="dd-MM-yyyy") 
+	@DateTimeFormat (pattern="dd/MM/yyyy") 
 	private Date date;
 	
 	private double amount;
@@ -116,7 +118,12 @@ public class Account {
 				int startSubstring = label.indexOf(type.getLabel()) + type.getLabel().length();
 				System.out.println(startSubstring);
 				if (type.getCodeLength() < 30) {
-					this.code = label.substring(startSubstring, startSubstring + type.getCodeLength());
+					if (StringUtils.equals("CARTE X", type.getLabel())) {
+						startSubstring = label.indexOf("RETRAIT DAB");
+						this.code = label.substring(startSubstring);
+					} else {
+						this.code = label.substring(startSubstring, startSubstring + type.getCodeLength());
+					}
 				} else {
 					if (label.contains(":")) {
 						this.code = label.substring(startSubstring, label.indexOf(":"));

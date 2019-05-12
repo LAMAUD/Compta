@@ -9,7 +9,8 @@ public enum Category {
 	LOISIRS,
 	VACANCES,
 	CREDIT,
-	FRAIS_BANCAIRE;
+	FRAIS_BANCAIRE,
+	ESPECE;
 	
 	
 }

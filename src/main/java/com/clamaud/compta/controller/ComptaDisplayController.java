@@ -5,14 +5,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import javax.transaction.Transactional;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
+import com.clamaud.compta.jpa.repository.AccountCriteria;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 
 @Controller
@@ -30,18 +36,26 @@ public class ComptaDisplayController {
 		
 		Iterable<Account> accounts = accountRepository.findAllByOrderByDateAsc();
 		
-		List<AccountDTO> accountsDTO = StreamSupport.stream(accounts.spliterator(), false)
-				   .map(account -> convertToDto(account))
-			      .collect(Collectors.toList());
+		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
 		
-		double balance = 0;
+		AccountCriteria criteria = new AccountCriteria();
 		
-		for (AccountDTO account : accountsDTO) {
-			balance += account.getAmount();
-			account.setBalance(Math.round(balance * 100) / 100);
-		}
+		model.addAttribute("criteria", criteria);
+		model.addAttribute("accounts", accountsDTO);
+		return "display";
+	}
+
+	
+	@PostMapping("/search")
+	public String searchAccounts (Model model, @ModelAttribute AccountCriteria criteria) {
+		
+		Iterable<Account> accounts = accountRepository.multiCriteriaSearch(criteria);
+		
+		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
 		
 		model.addAttribute("accounts", accountsDTO);
+		model.addAttribute("criteria", criteria);
+		
 		return "display";
 	}
 	
@@ -51,4 +65,17 @@ public class ComptaDisplayController {
 	    return accountDTO;
 	}
 	
+	private List<AccountDTO> getAccountsWithBalance(Iterable<Account> accounts) {
+		List<AccountDTO> accountsDTO = StreamSupport.stream(accounts.spliterator(), false)
+				.map(account -> convertToDto(account))
+				.collect(Collectors.toList());
+		
+		double balance = 0;
+		
+		for (AccountDTO account : accountsDTO) {
+			balance += account.getAmount();
+			account.setBalance(Math.round(balance * 100) / 100);
+		}
+		return accountsDTO;
+	}
 }

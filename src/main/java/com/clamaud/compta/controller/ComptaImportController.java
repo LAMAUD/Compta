@@ -99,7 +99,7 @@ public class ComptaImportController {
 	            	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(account.getDate(), account.getLabel(), account.getAmount());
 	            	   if (accountBdd == null) {
 	            		   List<Account> accountsfindByCode = accountRepository.findByCode(account.getCode());
-	            		   if (accountsfindByCode != null) {
+	            		   if (accountsfindByCode != null && !accountsfindByCode.isEmpty()) {
 	            			   Category category = accountsfindByCode.get(0).getCategory();
 	            			   SubCategory subCategory = accountsfindByCode.get(0).getSubCategory();
 	            			   account.setCategory(category);
