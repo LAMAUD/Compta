@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clamaud.compta.jpa.account.Account;
+import com.clamaud.compta.jpa.account.Category;
+import com.clamaud.compta.jpa.account.SubCategory;
 import com.clamaud.compta.jpa.account.UploadForm;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 import com.clamaud.compta.jpa.service.ImportService;
@@ -92,8 +94,17 @@ public class ComptaImportController {
 	               //
 	               List<Account> accounts = importService.getAccountsFromFile(serverFile);
 	               for (Account account : accounts) {
+	            	   
+	            	   
 	            	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(account.getDate(), account.getLabel(), account.getAmount());
 	            	   if (accountBdd == null) {
+	            		   List<Account> accountsfindByCode = accountRepository.findByCode(account.getCode());
+	            		   if (accountsfindByCode != null) {
+	            			   Category category = accountsfindByCode.get(0).getCategory();
+	            			   SubCategory subCategory = accountsfindByCode.get(0).getSubCategory();
+	            			   account.setCategory(category);
+	            			   account.setSubCategory(subCategory);
+	            		   }
 	            		   accountRepository.save(account);
 	            	   }
 	               }
