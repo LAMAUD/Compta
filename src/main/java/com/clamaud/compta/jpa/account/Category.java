@@ -1,7 +1,5 @@
 package com.clamaud.compta.jpa.account;
 
-import java.util.List;
-
 public enum Category {
 
 	MAISON,
@@ -10,7 +8,9 @@ public enum Category {
 	VACANCES,
 	CREDIT,
 	FRAIS_BANCAIRE,
-	ESPECE;
+	ESPECE,
+	PERSO,
+	SANTE;
 	
 	
 }

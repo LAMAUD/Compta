@@ -6,7 +6,6 @@ import java.util.stream.StreamSupport;
 
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,12 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
 import com.clamaud.compta.jpa.account.Category;
+import com.clamaud.compta.jpa.account.CategoryUtils;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 
 @Controller
@@ -58,18 +57,13 @@ public class CategoryController {
 		return "category";
 	}
 	
-	@GetMapping("/get")
+	@GetMapping("/getAccountCategory")
 	public String getCategory(@RequestParam("category") String category, @RequestParam("id") Integer id, Model model) {
 		
 		
-		Category catego = null;
-		for (Category categoryEnum : Category.values()) {
-			if (StringUtils.equals(categoryEnum.toString(), category)) {
-				catego = categoryEnum;
-				break;
-			}
-			
-		}
+		Category catego = CategoryUtils.findCategory(category);
+		
+		
 		Account account = accountRepository.findById(id).get();
 		
 		model.addAttribute("category", catego);
@@ -78,6 +72,8 @@ public class CategoryController {
 		
 		return "category :: form";
 	}
+	
+
 	
 	@PostMapping("/updateAccount")
 	@Transactional
