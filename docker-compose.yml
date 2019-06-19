@@ -1,6 +1,10 @@
 version: '3.3'
 
 services:
+  myapp:
+    image: <ID docker hub>/compta:1.0
+    ports:
+    - '8080:8080' 
   mysql:
     image: mysql:8.0.16
     restart: always
