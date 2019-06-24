@@ -42,7 +42,7 @@
 	   {
 		   $.ajax({
 	    		  method: "GET",
-	    		  url: "get",
+	    		  url: "getAccountCategory",
 	    		  data: { category: $("#category").val(), id: $("#id").val()},
 	    		  success:function(result) {
 	    		        $("#accountForm").append(result);

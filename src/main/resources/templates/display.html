@@ -9,45 +9,47 @@
       
    <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
    
-   <div th:fragment="form" class ="col-lg-10 offset-lg-1">
+   <div th:fragment="form">
       	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
-		   <div class ="jumbotron">
-			   <div class =" row col-lg-12">
-				    <div class ="col-lg-4 offset-lg-2 text-center">
-					    <p>Catégorie : 
-					    <select id = "category" th:field="*{category}" onchange="ajax()">
-					    	<option selected value=""> -- select an option -- </option>
-					    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
-					            th:value="${state}"
-					            th:text="${state}">
-					    	</option>
-						</select>
-						</p>
-					</div>
-					<div class ="col-lg-4 text-center">
-				        <p>Sous Catégorie : 
-				        <select th:field="*{subCategory}">
-				        	<option selected value=""> -- select an option -- </option>
-					    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.SubCategory).values()}"
-					            th:value="${state}"
-					            th:text="${state}">
-					    	</option>
-						</select>
-				        </p>
+		   <div class ="col-lg-10 offset-lg-1">
+			   <div class ="jumbotron">
+				   <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+						    <p>Catégorie : 
+						    <select id = "category" th:field="*{category}" onchange="ajax()">
+						    	<option selected value=""> -- select an option -- </option>
+						    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
+						            th:value="${state}"
+						            th:text="${state}">
+						    	</option>
+							</select>
+							</p>
+						</div>
+						<div class ="col-lg-4 text-center">
+					        <p>Sous Catégorie : 
+					        <select th:field="*{subCategory}">
+					        	<option selected value=""> -- select an option -- </option>
+						    	<option th:each="state,rowStat : ${T(com.clamaud.compta.jpa.account.SubCategory).values().?[category == '__${category}__']}"
+						            th:value="${state}"
+						            th:text="${state}">
+						    	</option>
+							</select>
+					        </p>
+				        </div>
 			        </div>
-		        </div>
-		        <div class =" row col-lg-12">
-				    <div class ="col-lg-4 offset-lg-2 text-center">
-				    	<p>Du : <input type="text" th:field="*{dateFrom}" /></p>
-				    </div>
-				    <div class ="col-lg-4 text-center">
-				    	<p>Au : <input type="text" th:field="*{dateTo}" /></p>
-				    </div>
-				</div>
-		        <div class ="row">
-		        	<div class ="col-lg-12 text-center">
-		        		<p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
-		        	</div>
+			        <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<p>Du : <input type="text" th:field="*{dateFrom}" /></p>
+					    </div>
+					    <div class ="col-lg-4 text-center">
+					    	<p>Au : <input type="text" th:field="*{dateTo}" /></p>
+					    </div>
+					</div>
+			        <div class ="row">
+			        	<div class ="col-lg-12 text-center">
+			        		<p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+			        	</div>
+			        </div>
 		        </div>
 	        </div>
 	        
@@ -85,6 +87,27 @@
 		        </tr>
 		    </tbody>
 		</table>
-    </div>  
+    </div>
+    
+     <script>
+		
+	   function ajax()
+	   {
+		   $.ajax({
+	    		  method: "GET",
+	    		  url: "getCategory",
+	    		  data: {category: $("#category").val()},
+	    		  success:function(result) {
+	    		        $("#accountForm").append(result);
+		    			 $("#accountForm").html(result);
+	    		    }
+	    		});
+	   }
+	   
+	   
+		</script>
+      
    </body>
+   
+   
 </html>
