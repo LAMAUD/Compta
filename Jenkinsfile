@@ -15,17 +15,17 @@ pipeline {
         }
         stage('Build') {
             steps {
-                mvn clean 
+                sh 'mvn clean'
             }
         }
         stage('Test') {
             steps {
-                mvn clean package
+                sh 'mvn clean package'
             }
         }
         stage('Deploy') {
             steps {
-                mvn clean install
+                sh 'mvn clean install'
             }
         }
     }
