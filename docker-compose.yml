@@ -2,7 +2,10 @@ version: '3.3'
 
 services:
   myapp:
-    image: <ID docker hub>/compta:1.0
+    build:
+      context: .
+    image: compta:1.0
+    container_name: compta
     ports:
     - '8080:8080' 
   mysql:
