@@ -114,9 +114,7 @@ public class Account {
 		for (AccountType type : AccountType.values()) {
 			if (label.contains(type.getLabel())) {
 				this.type = type.getLabel();
-				System.out.println(label);
 				int startSubstring = label.indexOf(type.getLabel()) + type.getLabel().length();
-				System.out.println(startSubstring);
 				if (type.getCodeLength() < 30) {
 					if (StringUtils.equals("CARTE X", type.getLabel())) {
 						startSubstring = label.indexOf("RETRAIT DAB");
