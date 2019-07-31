@@ -26,7 +26,8 @@ public enum SubCategory {
 	ESPECE(Category.ESPECE.toString()),
 	PERSO_MATHILDE(Category.PERSO.toString()),
 	PERSO_CEDRIC(Category.PERSO.toString()),
-	SANTE(Category.SANTE.toString());
+	SANTE(Category.SANTE.toString()),
+	CHAT(Category.CHAT.toString());
 	
 	private String category;
 	

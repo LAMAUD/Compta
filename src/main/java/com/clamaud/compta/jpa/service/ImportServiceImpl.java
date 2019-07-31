@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -32,23 +33,18 @@ public class ImportServiceImpl implements ImportService {
 
 	private List<Account> getAccountsFromRecords(List<List<String>> recordsFromFile) throws ParseException {
 		List<Account> accounts = new ArrayList<>();
-		boolean isStartOfAccount = false;
 		
+		List<List<String>> records = recordsFromFile.stream().filter(r -> r.size() > 2 && !r.get(0).contains("Date")).collect(Collectors.toList());
 		
-		for (List<String> record : recordsFromFile) {
+		for (List<String> record : records) {
 			
-			if (isStartOfAccount) {
-				String date = record.get(0);
-				String label = record.get(1);
-				String amount = record.get(2);
-				
-				Account account = new Account(dateFormat.parse(date), label, Double.valueOf(amount.replace(",", ".")));
-				accounts.add(account);
-			}
+			String date = record.get(0);
+			String label = record.get(1);
+			String amount = record.get(2);
 			
-			if (record.size() > 2) {
-				isStartOfAccount = true;
-			}
+			Account account = new Account(dateFormat.parse(date), label, Double.valueOf(amount.replace(",", ".")));
+			accounts.add(account);
+			
 		}
 		
 		return accounts;

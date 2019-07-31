@@ -10,7 +10,8 @@ public enum Category {
 	FRAIS_BANCAIRE,
 	ESPECE,
 	PERSO,
-	SANTE;
+	SANTE,
+	CHAT;
 	
 	
 }

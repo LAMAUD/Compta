@@ -40,20 +40,17 @@ public class CategoryController {
 				   .map(account -> convertToDto(account))
 			      .collect(Collectors.toList());
 		
-		AccountDTO accountToSend = null;
+		List<AccountDTO> accountsToSend = accountsDTO
+				.stream()
+				.filter(a -> a.getSubCategory() == null)
+				.collect(Collectors.toList());
 		
-		for (AccountDTO account : accountsDTO) {
-			if (account.getSubCategory() == null) {
-				accountToSend = account;
-				break;
-			}
-			
-		}
-		if (accountToSend == null) {
+		
+		if (accountsToSend.isEmpty()) {
 			return "index";
 		}
 		model.addAttribute("category", Category.MAISON);
-		model.addAttribute("account", accountToSend);
+		model.addAttribute("account", accountsToSend.get(0));
 		return "category";
 	}
 	
