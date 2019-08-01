@@ -39,10 +39,10 @@
 			        </div>
 			        <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Du : <input type="text" th:field="*{dateFrom}" /></p>
+					    	<p>Du : <input type="text" th:field="*{dateFrom}" id="beginResearchDate"/></p>
 					    </div>
 					    <div class ="col-lg-4 text-center">
-					    	<p>Au : <input type="text" th:field="*{dateTo}" /></p>
+					    	<p>Au : <input type="text" th:field="*{dateTo}" id="endResearchDate"/></p>
 					    </div>
 					</div>
 			        <div class ="row">
@@ -104,7 +104,22 @@
 	    		});
 	   }
 	   
-	   
+		  $( function() {
+		    $( "#beginResearchDate, #endResearchDate" ).datepicker({
+		    	altField: "#datepicker",
+		    	closeText: 'Fermer',
+		    	prevText: '<',
+		    	nextText: '>',
+		    	currentText: 'Aujourd\'hui',
+		    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+		    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+		    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+		    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+		    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+		    	weekHeader: 'Sem.',
+		    	dateFormat: 'dd/mm/yy'
+		    	});
+		  } );
 		</script>
       
    </body>
