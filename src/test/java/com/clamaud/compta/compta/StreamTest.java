@@ -2,12 +2,13 @@ package com.clamaud.compta.compta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.clamaud.compta.jpa.account.Category;
 import com.clamaud.compta.jpa.account.User;
 
 public class StreamTest {
@@ -103,6 +104,7 @@ public class StreamTest {
 	}
 	
 	@Test
+	@Ignore
 	public void test_StreamMapping() {
 		
 		List<User> users = new ArrayList<User>();
@@ -123,5 +125,28 @@ public class StreamTest {
 		names.stream().forEach(n -> System.out.println(n));
 		
 	}
+	
+	@Test
+	public void test_countOccurencesInList() {
+		List<Category> categories = new ArrayList<>();
+		categories.add(Category.CHAT);
+		categories.add(Category.ESPECE);
+		categories.add(Category.ESPECE);
+		categories.add(Category.FRAIS_BANCAIRE);
+		categories.add(Category.ESPECE);
+		categories.add(Category.CHAT);
+		
+		Map<Category, Long> mapCategories = categories
+				.stream()
+				.collect(Collectors.groupingBy(c -> c, Collectors.counting()));
+		
+		
+		Category category = mapCategories.entrySet().stream().max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1).get().getKey();
+		
+		System.out.println(category);
+		
+	}
+	
+	
 	
 }

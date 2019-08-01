@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,10 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.clamaud.compta.jpa.account.Account;
-import com.clamaud.compta.jpa.account.Category;
-import com.clamaud.compta.jpa.account.SubCategory;
 import com.clamaud.compta.jpa.account.UploadForm;
-import com.clamaud.compta.jpa.repository.AccountRepository;
+import com.clamaud.compta.jpa.service.AccountService;
 import com.clamaud.compta.jpa.service.ImportService;
 
 
@@ -31,8 +28,9 @@ public class ComptaImportController {
 	@Autowired
 	private ImportService importService;
 	
-	@Autowired
-	private AccountRepository accountRepository;
+	
+	@Autowired 
+	private AccountService accountService;
 	
 	@GetMapping("/index")
 	public String index() {
@@ -94,23 +92,7 @@ public class ComptaImportController {
 	               stream.close();
 	               //
 	               List<Account> accounts = importService.getAccountsFromFile(serverFile);
-	               for (Account account : accounts) {
-	            	   
-	            	   
-	            	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(account.getDate(), account.getLabel(), account.getAmount());
-	            	   if (accountBdd == null) {
-	            		   if (!StringUtils.isEmpty(account.getCode())) {
-	            			   List<Account> accountsfindByCode = accountRepository.findByCode(account.getCode());
-	            			   if (accountsfindByCode != null && !accountsfindByCode.isEmpty()) {
-	            				   Category category = accountsfindByCode.get(0).getCategory();
-	            				   SubCategory subCategory = accountsfindByCode.get(0).getSubCategory();
-	            				   account.setCategory(category);
-	            				   account.setSubCategory(subCategory);
-	            			   }
-						}
-	            		   accountRepository.save(account);
-	            	   }
-	               }
+	               accountService.saveAccounts(accounts);
 	               
 	               uploadedFiles.add(serverFile);
 	               System.out.println("Write file: " + serverFile);
