@@ -7,6 +7,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -81,7 +83,7 @@ public class Account {
 	@GeneratedValue
 	private Integer id;
 	
-	@DateTimeFormat (pattern="dd/MM/yyyy") 
+	@Temporal(TemporalType.DATE)
 	private Date date;
 	
 	private double amount;

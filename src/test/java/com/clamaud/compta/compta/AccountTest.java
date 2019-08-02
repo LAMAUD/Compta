@@ -2,6 +2,8 @@ package com.clamaud.compta.compta;
 
 import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -19,6 +21,7 @@ import com.clamaud.compta.jpa.account.Account.User;
 @RunWith(Parameterized.class)
 public class AccountTest {
 
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");	
 	  
 	@Parameters
     public static Collection<Object[]> data() {
@@ -52,12 +55,20 @@ public class AccountTest {
 
 
 	@Test
-	public void test_account() {
+	public void test_accountCode() {
 		
 		Account account = new Account(new Date(), label, 45);
-		System.out.println(String.format("%s ======> %s =====> %s", label, account.getCode(), account.getUser()));
 		assertTrue(StringUtils.equals(account.getCode(), codeExpected));
 		assertTrue(StringUtils.equals(account.getUser(), userExpected));
+		
+	}
+	
+	@Test
+	public void test_accountDate() throws ParseException {
+		
+		String date = "05/07/2019";
+		Account account = new Account(dateFormat.parse(date), "ACHAT CB BOULANGERIE PA 29.06.19 CARTE NUMERO                843", 45);
+		System.out.println(account.getDate());
 		
 	}
 	

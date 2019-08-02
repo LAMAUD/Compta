@@ -63,6 +63,10 @@ public class ComptaApplicationTests {
 		
 		File file = new File(filePath);
 		List<Account> accountsFromFile = importService.getAccountsFromFile(file);
+		
+		for (Account account : accountsFromFile) {
+			System.out.println(String.format("%s ==> %s", file, account.getDate()));
+		}
 		assertTrue(accountsFromFile.size() == sizeList);
 		assertEquals(accountsFromFile.get(0).getAmount(), value, 0.001);
 		
