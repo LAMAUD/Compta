@@ -18,6 +18,8 @@ public class AccountCriteria {
 	
 	@DateTimeFormat (pattern="dd/MM/yyyy")
 	private Date dateTo;
+	
+	private boolean expensesOnly;
 
 	public Category getCategory() {
 		return category;
@@ -49,6 +51,14 @@ public class AccountCriteria {
 
 	public void setDateTo(Date dateTo) {
 		this.dateTo = dateTo;
+	}
+
+	public boolean isExpensesOnly() {
+		return expensesOnly;
+	}
+
+	public void setExpensesOnly(boolean expensesOnly) {
+		this.expensesOnly = expensesOnly;
 	}
 
 	

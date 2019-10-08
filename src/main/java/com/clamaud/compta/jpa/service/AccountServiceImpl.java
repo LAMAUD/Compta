@@ -31,31 +31,36 @@ public class AccountServiceImpl implements AccountService {
       			   if (accountsfindByCode != null && !accountsfindByCode.isEmpty()) {
       				   List<Category> categories = accountsfindByCode.stream().map(a -> a.getCategory()).collect(Collectors.toList());
       				   
-      				   Category category = categories
-      						   .stream()
-      						   .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
-      						   .entrySet()
-      						   .stream()
-      						   .max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
-      						   .get()
-      						   .getKey();
+      				   categories = categories.stream().filter(c -> c != null).collect(Collectors.toList());
       				   
-      				    SubCategory subCategory = accountsfindByCode
-      				    		.stream()
-      				    		.filter(a -> a.getCategory() == category).collect(Collectors.toList())
-		      				    .stream()
-		      				    .map(a -> a.getSubCategory())
-		      				    .collect(Collectors.toList())
-		      				    .stream()
-								.collect(Collectors.groupingBy(c -> c, Collectors.counting()))
-								.entrySet()
-								.stream()
-								.max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
-								.get()
-								.getKey();
-      				   
-      				   account.setCategory(category);
-      				   account.setSubCategory(subCategory);
+      				   if (!categories.isEmpty()) {
+						
+      					   Category category = categories
+      							   .stream()
+      							   .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
+      							   .entrySet()
+      							   .stream()
+      							   .max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
+      							   .get()
+      							   .getKey();
+      					   
+      					   SubCategory subCategory = accountsfindByCode
+      							   .stream()
+      							   .filter(a -> a.getCategory() == category).collect(Collectors.toList())
+      							   .stream()
+      							   .map(a -> a.getSubCategory())
+      							   .collect(Collectors.toList())
+      							   .stream()
+      							   .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
+      							   .entrySet()
+      							   .stream()
+      							   .max((entry1, entry2) -> entry1.getValue() > entry2.getValue() ? 1 : -1)
+      							   .get()
+      							   .getKey();
+      					   
+      					   account.setCategory(category);
+      					   account.setSubCategory(subCategory);
+					 }
       			   }
 				}
       		   accountRepository.save(account);
