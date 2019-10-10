@@ -2,11 +2,13 @@ package com.clamaud.compta.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.lang3.StringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
@@ -79,7 +82,14 @@ public class ComptaDisplayController {
 		return "display :: form";
 	}
 	
-	
+	@GetMapping("/account")
+	@ResponseBody
+	public Account getAccount(@RequestParam("id") Integer id) {
+		
+		Account account = accountRepository.findById(id).get();
+		
+		return account;
+	}
 	
 	private AccountDTO convertToDto(Account account) {
 		AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);

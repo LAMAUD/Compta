@@ -11,7 +11,8 @@ public enum Category {
 	ESPECE,
 	PERSO,
 	SANTE,
-	CHAT;
+	CHAT,
+	VOITURE;
 	
 	
 }

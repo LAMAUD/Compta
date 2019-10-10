@@ -63,7 +63,7 @@
    
    
    <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
-      	<table class="table">
+      	<table id="list" class="table">
 		    <thead>
 		        <tr>
 		            <th scope="col"> Date </th>
@@ -74,6 +74,7 @@
 		            <th scope="col"> Catégorie </th>
 		            <th scope="col"> Sous catégorie </th>
 		            <th scope="col"> Solde </th>
+		            <th scope="col"> Editer </th>
 		        </tr>
 		    </thead>
 		    <tbody>
@@ -81,7 +82,7 @@
 		            <td colspan="2"> Pas de compte importé </td>
 		        </tr>
 		        <tr th:each="account : ${accounts}">
-		            <td><span th:text="${#dates.format(account.date,'dd MMMM yyyy')}"> Date </span></td>
+		            <td><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
 		            <td><span th:text="${account.amount}"> Montant </span></td>
 		            <td><span th:text="${account.type}"> Type </span></td>
 		            <td><span th:text="${account.code}"> Code </span></td>
@@ -89,15 +90,104 @@
 		            <td><span th:text="${account.category}"> Catégorie </span></td>
 		            <td><span th:text="${account.subCategory}"> Sous catégorie </span></td>
 		            <td><span th:text="${account.balance}"> Solde </span></td>
+		            <td><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
+		             Edit
+					</button></td>
 		        </tr>
 		    </tbody>
 		</table>
     </div>
     
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      	<span>id</span><input id="id" disabled="disabled"/>
+	      	<span>Montant</span><input id="amount" disabled="disabled"/>
+	      	<span>Type</span><input id="type" disabled="disabled"/>
+	      	<span>Code</span><input id="code" disabled="disabled"/>
+	      	<span>Category</span><input id="category"/>
+	      	<span>Sous category</span><input id="subCategory"/>
+	        
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+    
      <script>
 		
+     
+     function edit(id){
+    	 $("#id").val(id);
+    	
+    	 $.ajax({
+   		  method: "GET",
+   		  url: "account",
+   		  data: {id: $("#id").val()},
+   		  success:function(account) {
+   			$("#amount").val(account.amount);
+   			$("#type").val(account.type);
+   			$("#code").val(account.code);
+   			$("#category").val(account.category);
+   			$("#subCategory").val(account.subCategory);
+   		  }
+   		});
+    	 
+    	 $('#exampleModal').modal({
+    		    show: true
+    	}); 
+     }
+     
+     jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    	    "date-euro-pre": function ( a ) {
+    	        var x;
+    	 
+    	        if ( $.trim(a) !== '' ) {
+    	        	a = a.replace('<span>', '');
+    	        	a = a.replace('</span>', '');
+    	            var frDatea = $.trim(a).split(' ');
+    	            var frTimea = (undefined != frDatea[1]) ? frDatea[1].split(':') : [00,00,00];
+    	            var frDatea2 = frDatea[0].split('/');
+    	            x = (frDatea2[2] + frDatea2[1] + frDatea2[0] + frTimea[0] + frTimea[1] + ((undefined != frTimea[2]) ? frTimea[2] : 0)) * 1;
+    	        }
+    	        else {
+    	            x = Infinity;
+    	        }
+    	 
+    	        return x;
+    	    },
+    	 
+    	    "date-euro-asc": function ( a, b ) {
+    	        return a - b;
+    	    },
+    	 
+    	    "date-euro-desc": function ( a, b ) {
+    	        return b - a;
+    	    }
+    	} );
+     
+     
      $(document).ready(function(){
     	 ajax();
+    	 $('#list').DataTable({
+    		 
+    	     columnDefs: [
+    	         { type: 'date-euro', targets: 0, orderable: true },
+    	         { targets: [1,2,3,4,5,6,7], orderable: false}
+    	       ],
+    	       searching: false,
+    	       
+    	    });
      });
      
 		  
@@ -127,6 +217,7 @@
 	    		    }
 	    		});
 	   }
+	   
 	   
 		</script>
       

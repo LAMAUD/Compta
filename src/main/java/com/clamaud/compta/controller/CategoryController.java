@@ -1,5 +1,6 @@
 package com.clamaud.compta.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -43,6 +44,7 @@ public class CategoryController {
 		List<AccountDTO> accountsToSend = accountsDTO
 				.stream()
 				.filter(a -> a.getSubCategory() == null)
+				.sorted(Comparator.comparing(AccountDTO::getDate))
 				.collect(Collectors.toList());
 		
 		
@@ -69,6 +71,9 @@ public class CategoryController {
 		
 		return "category :: form";
 	}
+	
+	
+	
 	
 
 	
