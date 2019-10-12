@@ -20,8 +20,11 @@ import org.springframework.web.servlet.view.RedirectView;
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
 import com.clamaud.compta.jpa.account.Category;
+import com.clamaud.compta.jpa.account.CategoryDTO;
+import com.clamaud.compta.jpa.account.CategoryEntity;
 import com.clamaud.compta.jpa.account.CategoryUtils;
 import com.clamaud.compta.jpa.repository.AccountRepository;
+import com.clamaud.compta.jpa.repository.CategoryRepository;
 
 @Controller
 public class CategoryController {
@@ -31,6 +34,9 @@ public class CategoryController {
 	
 	@Autowired
     private ModelMapper modelMapper;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
 	
 	@GetMapping("/category")
 	public String list(Model model) {
@@ -54,6 +60,27 @@ public class CategoryController {
 		model.addAttribute("category", Category.MAISON);
 		model.addAttribute("account", accountsToSend.get(0));
 		return "category";
+	}
+	
+	
+	@GetMapping("/categoryRegister")
+	public String listAndAddCategory(Model model) {
+		
+		
+		model.addAttribute("category", new CategoryEntity());
+		model.addAttribute("categories", categoryRepository.findAll());
+		
+		return "categoryRegister";
+	}
+	
+	@PostMapping("/saveCategory")
+	public String saveCategory(Model model, @ModelAttribute CategoryDTO categoryDTO) {
+		
+		
+		CategoryEntity category = modelMapper.map(categoryDTO, CategoryEntity.class);
+		categoryRepository.save(category);
+		
+		return listAndAddCategory(model);
 	}
 	
 	@GetMapping("/getAccountCategory")

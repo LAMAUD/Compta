@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-   <head>
-      <meta charset="UTF-8">
-      <title>Upload Result</title>
-   </head>
-    
+   
+   <div th:insert="menu :: head"></div> 
+   
    <body>
+      <div th:insert="menu :: navbar"></div> 
        
       Description: <span th:utext="${description}"></span>
       <br/>

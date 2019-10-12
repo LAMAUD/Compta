@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+   <div th:insert="menu :: head"></div> 
+   
+   <body>
+       
+      <div th:insert="menu :: navbar"></div> 
+       
+      <h3>Associer les catégories</h3>
+      
+      <div th:fragment = "form">
+      	<form id="accountForm" action="#" th:action="@{/saveCategory}" th:object="${category}" method="post">
+	    	
+	    	<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<span>code : </span><input id = "id" type="text" th:field="*{code}" />
+					    </div>
+			</div>
+			<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<span>Label : </span><input id = "label" type="text" th:field="*{label}" />
+					    </div>
+			</div>
+			<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<span>Description : </span><input id = "description" type="text" th:field="*{description}" />
+					    </div>
+			</div>
+			<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+					    </div>
+			</div>
+    	</form>	
+       </div>
+       
+       <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
+      	<table id="list" class="table">
+		    <thead>
+		        <tr>
+		            <th scope="col"> Code </th>
+		            <th scope="col"> Label </th>
+		            <th scope="col"> Description </th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    <tr th:if="${categories.empty}">
+		            <td colspan="2"> Pas de catégorie </td>
+		        </tr>
+		        <tr th:each="category : ${categories}">
+		            <td><span th:text="${category.code}"> Code </span></td>
+		            <td><span th:text="${category.label}"> Label </span></td>
+		            <td><span th:text="${category.description}"> Description </span></td>
+		        </tr>
+		    </tbody>
+		</table>
+    </div>
+	   <script>
+		
+	   
+	   
+	   
+		</script>
+   </body>
+   
+</html>

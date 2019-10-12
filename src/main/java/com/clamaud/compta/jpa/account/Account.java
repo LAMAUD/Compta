@@ -7,11 +7,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Account {
@@ -98,6 +98,12 @@ public class Account {
 	
 	@Enumerated(EnumType.STRING)
 	private Category category;
+	
+	@ManyToOne
+	private CategoryEntity categoryEntity;
+	
+	@ManyToOne	
+	private SubCategoryEntity subCategoryEntity;
 	
 	@Enumerated(EnumType.STRING)
 	private SubCategory subCategory;

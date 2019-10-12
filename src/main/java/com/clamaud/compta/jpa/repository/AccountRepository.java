@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.clamaud.compta.jpa.account.Account;
-import com.clamaud.compta.jpa.account.Category;
-import com.clamaud.compta.jpa.account.SubCategory;
 
 public interface AccountRepository extends CrudRepository<Account, Integer> {
 
