@@ -108,17 +108,43 @@
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	      	<span>id</span><input id="id" disabled="disabled"/>
-	      	<span>Montant</span><input id="amount" disabled="disabled"/>
-	      	<span>Type</span><input id="type" disabled="disabled"/>
-	      	<span>Code</span><input id="code" disabled="disabled"/>
-	      	<span>Category</span><input id="category"/>
-	      	<span>Sous category</span><input id="subCategory"/>
+	      <div class =" row col-lg-12">
+			    <div class ="col-lg-4 offset-lg-2 text-center">
+			      	<span>id</span><input id="id" disabled="disabled"/>
+			    </div>
+		  </div>
+		  <div class =" row col-lg-12">
+			    <div class ="col-lg-4 offset-lg-2 text-center">
+			      	<span>Montant</span><input id="amount" disabled="disabled"/>
+		        </div>
+		  </div>    
+		  <div class =" row col-lg-12">
+			    <div class ="col-lg-4 offset-lg-2 text-center">
+			      	<span>Type</span><input id="type" disabled="disabled"/>
+		  		</div>
+		  </div>    
+		  <div class =" row col-lg-12">
+			    <div class ="col-lg-4 offset-lg-2 text-center">
+			      	<span>Code</span><input id="code" disabled="disabled"/>
+		  		</div>
+		  </div>	    
+		  <div class =" row col-lg-12">
+			    <div class ="col-lg-4 offset-lg-2 text-center">
+			      	<span>Category</span><input id="categoryPopup"/>
+				</div>
+		  </div>
+		  <div class =" row col-lg-12">
+			    <div class ="col-lg-4 offset-lg-2 text-center">
+			      	<span>Sous category</span><input id="subCategoryPopup"/>
+				</div>
+		  </div>
+			    
+	      	
 	        
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary">Save changes</button>
+	        <button type="button" class="btn btn-primary" onclick="save()">Save changes</button>
 	      </div>
 	    </div>
 	  </div>
@@ -135,17 +161,37 @@
    		  url: "account",
    		  data: {id: $("#id").val()},
    		  success:function(account) {
+   			console.log(account);
+   			console.log(account.category);
+   			console.log(account.subCategory);
    			$("#amount").val(account.amount);
    			$("#type").val(account.type);
    			$("#code").val(account.code);
-   			$("#category").val(account.category);
-   			$("#subCategory").val(account.subCategory);
+   			$("#categoryPopup").val(account.category);
+   			$("#subCategoryPopup").val(account.subCategory);
    		  }
    		});
     	 
     	 $('#exampleModal').modal({
     		    show: true
     	}); 
+     }
+     
+     function save(){
+    	console.log("SAVE");
+    	 $.ajax({
+      		  method: "POST",
+      		  url: "updateAccountRecap",
+      		  data: {id: $("#id").val(), category: $("#categoryPopup").val(),
+      			  subCategory: $("#subCategoryPopup").val()},
+      		  success:function(account) {
+      			console.log(account);
+      		  }
+      		}); 
+    	 $(function () {
+    		   $('#exampleModal').modal('toggle');
+    	});
+    	 
      }
      
      jQuery.extend( jQuery.fn.dataTableExt.oSort, {

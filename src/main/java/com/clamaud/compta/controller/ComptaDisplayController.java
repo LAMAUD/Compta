@@ -91,6 +91,18 @@ public class ComptaDisplayController {
 		return account;
 	}
 	
+	@PostMapping("/updateAccountRecap")
+	@ResponseBody
+	public Account updateAccount(@RequestParam("id") Integer id, @RequestParam("category") String category,
+			@RequestParam("subCategory") String subCategory) {
+		System.out.println("------------------------------------------ DEDANS ------------------------------------------");
+		Account account = accountRepository.findById(id).get();
+		account.setCategory(CategoryUtils.findCategory(category));
+		account.setSubCategory(CategoryUtils.findSubCategory(subCategory));
+		
+		return account;
+	}
+	
 	private AccountDTO convertToDto(Account account) {
 		AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);
 	    return accountDTO;

@@ -17,4 +17,16 @@ public class CategoryUtils {
 		return catego;
 	}
 	
+	public static SubCategory findSubCategory(String subCategory) {
+		SubCategory subCatego = null;
+		for (SubCategory categoryEnum : SubCategory.values()) {
+			if (StringUtils.equals(categoryEnum.toString(), subCategory)) {
+				subCatego = categoryEnum;
+				break;
+			}
+			
+		}
+		return subCatego;
+	}
+	
 }
