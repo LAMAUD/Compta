@@ -1,5 +1,7 @@
 package com.clamaud.compta.jpa.account;
 
+import java.util.Set;
+
 public class SubCategoryDTO {
 	
 	private Integer id;
@@ -9,6 +11,7 @@ public class SubCategoryDTO {
 	private String label;
 	
 	private String description;
+	
 
 	public Integer getId() {
 		return id;
@@ -41,5 +44,6 @@ public class SubCategoryDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 
 }

@@ -9,7 +9,7 @@
       
    <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
    
-   <div th:fragment="form">
+   <div th:fragment="searchAccount">
       	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
 		   <div class ="col-lg-10 offset-lg-1">
 			   <div class ="jumbotron">
@@ -87,8 +87,8 @@
 		            <td><span th:text="${account.type}"> Type </span></td>
 		            <td><span th:text="${account.code}"> Code </span></td>
 		            <td><span th:text="${account.user}"> Utilisateur </span></td>
-		            <td><span th:text="${account.category}"> Catégorie </span></td>
-		            <td><span th:text="${account.subCategory}"> Sous catégorie </span></td>
+		            <td><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
+		            <td><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
 		            <td><span th:text="${account.balance}"> Solde </span></td>
 		            <td><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
 		             Edit
@@ -98,7 +98,7 @@
 		</table>
     </div>
     
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="categoriesUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -108,39 +108,51 @@
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	      <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>id</span><input id="id" disabled="disabled"/>
-			    </div>
-		  </div>
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Montant</span><input id="amount" disabled="disabled"/>
-		        </div>
-		  </div>    
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Type</span><input id="type" disabled="disabled"/>
-		  		</div>
-		  </div>    
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Code</span><input id="code" disabled="disabled"/>
-		  		</div>
-		  </div>	    
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Category</span><input id="categoryPopup"/>
+	      <form th:fragment="formEditPopup" id="updateCategories" action="#" th:action="@{/updateAccountCategories}" th:object="${accountDTO}" method="post">
+			    	<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<span>id</span> <input id="id" type="text" th:field="*{id}"/>
+					    </div>
+					</div>
+				   <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Montant</span> <input id = "amount" type="text" th:field="*{amount}"/>
+				        </div>
+				  </div>    
+				  <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Type</span><input id="type" type="text" th:field="*{type}"disabled="disabled"/>
+				  		</div>
+				  </div>    
+				  <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Code</span><input id="code" type="text" th:field="*{code}" disabled="disabled"/>
+				  		</div>
+				  </div>	   
+		    	<div class =" row col-lg-12">
+					<div class ="col-lg-4 offset-lg-2 text-center">
+						<select id = "category_id" th:field="*{categoryEntity}">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="state : ${categories}"
+					            th:value="${state}"
+					            th:text="${state.label}">
+					    	</option>
+						</select>
+					</div>
 				</div>
-		  </div>
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Sous category</span><input id="subCategoryPopup"/>
+				<div class =" row col-lg-12">
+					<div class ="col-lg-4 offset-lg-2 text-center">
+						<select id = "subCategory_id" th:field="*{subCategory_id}">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="state : ${categoryEntity?.subCategories}"
+					            th:value="${state.id}"
+					            th:text="${state.label}">
+					    	</option>
+						</select>
+					</div>
 				</div>
-		  </div>
-			    
-	      	
-	        
+	   		</form>
+	      
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -160,36 +172,23 @@
    		  method: "GET",
    		  url: "account",
    		  data: {id: $("#id").val()},
-   		  success:function(account) {
-   			console.log(account);
-   			console.log(account.category);
-   			console.log(account.subCategory);
-   			$("#amount").val(account.amount);
-   			$("#type").val(account.type);
-   			$("#code").val(account.code);
-   			$("#categoryPopup").val(account.category);
-   			$("#subCategoryPopup").val(account.subCategory);
+   		  success:function(fragment) {
+   			console.log("SUCCESS");
+ 			$("#formEditPopup").replaceWith(fragment);
+   			
    		  }
    		});
     	 
-    	 $('#exampleModal').modal({
+    	 $('#categoriesUpdateModal').modal({
     		    show: true
     	}); 
      }
      
      function save(){
     	console.log("SAVE");
-    	 $.ajax({
-      		  method: "POST",
-      		  url: "updateAccountRecap",
-      		  data: {id: $("#id").val(), category: $("#categoryPopup").val(),
-      			  subCategory: $("#subCategoryPopup").val()},
-      		  success:function(account) {
-      			console.log(account);
-      		  }
-      		}); 
+    	 $('#categoriesUpdateModal').submit();
     	 $(function () {
-    		   $('#exampleModal').modal('toggle');
+    		   $('#categoriesUpdateModal').modal('toggle');
     	});
     	 
      }

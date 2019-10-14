@@ -225,5 +225,21 @@ public class Account {
 	public void setSubCategory(SubCategory subCategory) {
 		this.subCategory = subCategory;
 	}
+
+	public CategoryEntity getCategoryEntity() {
+		return categoryEntity;
+	}
+
+	public void setCategoryEntity(CategoryEntity categoryEntity) {
+		this.categoryEntity = categoryEntity;
+	}
+
+	public SubCategoryEntity getSubCategoryEntity() {
+		return subCategoryEntity;
+	}
+
+	public void setSubCategoryEntity(SubCategoryEntity subCategoryEntity) {
+		this.subCategoryEntity = subCategoryEntity;
+	}
 	
 }

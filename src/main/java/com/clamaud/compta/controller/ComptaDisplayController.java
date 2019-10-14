@@ -2,10 +2,7 @@ package com.clamaud.compta.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -25,6 +22,8 @@ import com.clamaud.compta.jpa.account.Category;
 import com.clamaud.compta.jpa.account.CategoryUtils;
 import com.clamaud.compta.jpa.repository.AccountCriteria;
 import com.clamaud.compta.jpa.repository.AccountRepository;
+import com.clamaud.compta.jpa.repository.CategoryRepository;
+import com.clamaud.compta.jpa.repository.SubCategoryRepository;
 
 @Controller
 public class ComptaDisplayController {
@@ -35,6 +34,12 @@ public class ComptaDisplayController {
 	
 	@Autowired
     private ModelMapper modelMapper;
+	
+	@Autowired
+	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private SubCategoryRepository subCategoryRepository;
 	
 	@GetMapping("/all")
 	public String list(Model model) {
@@ -48,6 +53,9 @@ public class ComptaDisplayController {
 		model.addAttribute("date", date);
 		model.addAttribute("criteria", criteria);
 		model.addAttribute("accounts", accountsDTO);
+		model.addAttribute("accountDTO", new AccountDTO());
+		model.addAttribute("categories", categoryRepository.findAll());
+		model.addAttribute("subCategories", subCategoryRepository.findAll());
 		return "display";
 	}
 
@@ -62,6 +70,9 @@ public class ComptaDisplayController {
 		model.addAttribute("date", date);
 		model.addAttribute("accounts", accountsDTO);
 		model.addAttribute("criteria", criteria);
+		model.addAttribute("categories", categoryRepository.findAll());
+		model.addAttribute("subCategories", subCategoryRepository.findAll());
+		model.addAttribute("accountDTO", new AccountDTO());
 		
 		return "display";
 	}
@@ -79,19 +90,26 @@ public class ComptaDisplayController {
 		model.addAttribute("category", catego);
 		model.addAttribute("criteria", criteria);
 		
-		return "display :: form";
+		return "display :: searchAccount";
 	}
 	
 	@GetMapping("/account")
-	@ResponseBody
-	public Account getAccount(@RequestParam("id") Integer id) {
+	public String getAccount(Model model, @RequestParam("id") Integer id) {
 		
 		Account account = accountRepository.findById(id).get();
+		Integer categoryID = account.getCategoryEntity() != null ? account.getCategoryEntity().getId() : null;
+		Integer subCategoryID = account.getSubCategoryEntity() != null ? account.getSubCategoryEntity().getId() : null;
+		AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);
+		accountDTO.setCategory_id(categoryID);
+		accountDTO.setSubCategory_id(subCategoryID);
+		model.addAttribute("accountDTO", accountDTO);
+		model.addAttribute("categories", categoryRepository.findAll());
+		model.addAttribute("subCategories", subCategoryRepository.findAll());
 		
-		return account;
+		return "display :: formEditPopup";
 	}
 	
-	@PostMapping("/updateAccountRecap")
+	@PostMapping("/updateAccountCategories")
 	@ResponseBody
 	public Account updateAccount(@RequestParam("id") Integer id, @RequestParam("category") String category,
 			@RequestParam("subCategory") String subCategory) {

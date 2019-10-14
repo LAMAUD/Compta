@@ -25,12 +25,21 @@ public class AccountDTO {
 	private String label;
 	
 	private double balance;
+	
+	private CategoryDTO categoryEntity;
+	
+	private SubCategoryDTO subCategoryEntity;
+	
+	private Integer category_id;
+	
+	private Integer subCategory_id;
 
 	@Enumerated(EnumType.STRING)
 	private Category category;
 	
 	@Enumerated(EnumType.STRING)
 	private SubCategory subCategory;
+	
 	
 	public Integer getId() {
 		return id;
@@ -112,7 +121,38 @@ public class AccountDTO {
 		this.balance = balance;
 	}
 
+	public CategoryDTO getCategoryEntity() {
+		return categoryEntity;
+	}
 
+	public void setCategoryEntity(CategoryDTO categoryEntity) {
+		this.categoryEntity = categoryEntity;
+	}
+
+	public SubCategoryDTO getSubCategoryEntity() {
+		return subCategoryEntity;
+	}
+
+	public void setSubCategoryEntity(SubCategoryDTO subCategoryEntity) {
+		this.subCategoryEntity = subCategoryEntity;
+	}
+
+	public Integer getCategory_id() {
+		
+		return categoryEntity != null ? categoryEntity.getId() : null;
+	}
+
+	public void setCategory_id(Integer category_id) {
+		this.category_id = category_id;
+	}
+
+	public Integer getSubCategory_id() {
+		return subCategoryEntity != null ? subCategoryEntity.getId() : null;
+	}
+
+	public void setSubCategory_id(Integer subCategory_id) {
+		this.subCategory_id = subCategory_id;
+	}
 
 
 }
