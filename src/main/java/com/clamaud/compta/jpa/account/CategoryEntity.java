@@ -5,7 +5,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -22,7 +22,7 @@ public class CategoryEntity {
 	
 	private String description;
 	
-	@OneToMany
+	@ManyToMany
 	private Set<SubCategoryEntity> subCategories;
 
 	public String getCode() {
@@ -56,7 +56,11 @@ public class CategoryEntity {
 	public void setSubCategories(Set<SubCategoryEntity> subCategories) {
 		this.subCategories = subCategories;
 	}
-
+	
+	public void addSubCategory(SubCategoryEntity subCategory) {
+		subCategories.add(subCategory);
+	}
+	
 	public Integer getId() {
 		return id;
 	}

@@ -1,8 +1,11 @@
 package com.clamaud.compta.jpa.account;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -19,6 +22,9 @@ public class SubCategoryEntity {
 	private String label;
 	
 	private String description;
+	
+	@ManyToMany
+	private Set<CategoryEntity> categories;
 
 	public String getCode() {
 		return code;
@@ -46,5 +52,13 @@ public class SubCategoryEntity {
 
 	public Integer getId() {
 		return id;
+	}
+
+	public Set<CategoryEntity> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(Set<CategoryEntity> categories) {
+		this.categories = categories;
 	}
 }
