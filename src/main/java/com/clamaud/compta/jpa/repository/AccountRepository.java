@@ -10,7 +10,7 @@ import com.clamaud.compta.jpa.account.Account;
 
 public interface AccountRepository extends CrudRepository<Account, Integer> {
 
-	public Account findByDateAndLabelAndAmount(Date date, String label, double amount);
+	public Account findByDateAndLabelAndAmount(Date startDate, Date endDate, String label, double amount);
 	
 	@Query("SELECT MAX(a.date) FROM Account a") 
     Date findLatestDateAccount();

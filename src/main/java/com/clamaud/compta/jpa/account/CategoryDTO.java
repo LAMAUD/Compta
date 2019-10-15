@@ -9,7 +9,7 @@ public class CategoryDTO {
 	private String label;
 	
 	private String description;
-
+	
 	public Integer getId() {
 		return id;
 	}
@@ -41,5 +41,6 @@ public class CategoryDTO {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
 
 }

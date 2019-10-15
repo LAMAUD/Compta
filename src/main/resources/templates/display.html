@@ -9,29 +9,29 @@
       
    <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
    
-   <div th:fragment="form">
-      	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
+   <div>
+      	<form  th:fragment="searchAccount" id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
 		   <div class ="col-lg-10 offset-lg-1">
 			   <div class ="jumbotron">
 				   <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
 						    <p>Catégorie : 
-						    <select id = "category" th:field="*{category}" onchange="ajax()">
+						    <select id = "category" th:field="*{category_id}" onchange="updateSubCategories()">
 						    	<option selected value=""> -- select an option -- </option>
-						    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
-						            th:value="${state}"
-						            th:text="${state}">
+						    	<option th:each="category : ${categories}"
+						            th:value="${category.id}"
+						            th:text="${category.label}">
 						    	</option>
 							</select>
 							</p>
 						</div>
 						<div class ="col-lg-4 text-center">
 					        <p>Sous Catégorie : 
-					        <select th:field="*{subCategory}">
+					        <select id = "subCategory" th:field="*{subCategory_id}">
 					        	<option selected value=""> -- select an option -- </option>
-						    	<option th:each="state,rowStat : ${T(com.clamaud.compta.jpa.account.SubCategory).values().?[category == '__${category}__']}"
-						            th:value="${state}"
-						            th:text="${state}">
+						    	<option th:each="subCategory : ${subCategories}"
+						            th:value="${subCategory.id}"
+						            th:text="${subCategory.label}">
 						    	</option>
 							</select>
 					        </p>
@@ -39,15 +39,20 @@
 			        </div>
 			        <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Du : <input type="text" th:field="*{dateFrom}" id="beginResearchDate"/></p>
+					    	<p>Du : <input id = "dateFrom" type="text" th:field="*{dateFrom}"/></p>
 					    </div>
 					    <div class ="col-lg-4 text-center">
-					    	<p>Au : <input type="text" th:field="*{dateTo}" id="endResearchDate"/></p>
+					    	<p>Au : <input id = "dateTo" type="text" th:field="*{dateTo}"/></p>
 					    </div>
 					</div>
 					<div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Dépenses : <input type="checkbox" th:field="*{expensesOnly}" /></p>
+					    	<p>Dépenses : <input id = "expensesOnly" type="checkbox" th:field="*{expensesOnly}" /></p>
+					    </div>
+					</div>
+					<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<p>Non catégorisés : <input id = "nonCategorised" type="checkbox" th:field="*{nonCategorised}" /></p>
 					    </div>
 					</div>
 			        <div class ="row">
@@ -60,7 +65,11 @@
 	        
     	</form>	
    </div>
-   
+   <div class ="row">
+		<div class ="col-lg-12 text-center">
+			<span style="font-size: 40px" id="balance" th:text="${balance}"> Balance </span><span style="font-size: 40px">€</span>
+		</div>
+	</div>
    
    <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
       	<table id="list" class="table">
@@ -82,15 +91,15 @@
 		            <td colspan="2"> Pas de compte importé </td>
 		        </tr>
 		        <tr th:each="account : ${accounts}">
-		            <td><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
-		            <td><span th:text="${account.amount}"> Montant </span></td>
-		            <td><span th:text="${account.type}"> Type </span></td>
-		            <td><span th:text="${account.code}"> Code </span></td>
-		            <td><span th:text="${account.user}"> Utilisateur </span></td>
-		            <td><span th:text="${account.category}"> Catégorie </span></td>
-		            <td><span th:text="${account.subCategory}"> Sous catégorie </span></td>
-		            <td><span th:text="${account.balance}"> Solde </span></td>
-		            <td><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
+		            <td class="col-lg-1"><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
+		            <td class="col-lg-1"><span th:text="${account.amount}"> Montant </span></td>
+		            <td class="col-lg-1"><span th:text="${account.type}"> Type </span></td>
+		            <td class="col-lg-2"><span th:text="${account.code}"> Code </span></td>
+		            <td class="col-lg-1"><span th:text="${account.user}"> Utilisateur </span></td>
+		            <td class="col-lg-2"><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
+		            <td class="col-lg-2"><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
+		            <td class="col-lg-1"><span th:text="${account.balance}"> Solde </span></td>
+		            <td class="col-lg-1"><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
 		             Edit
 					</button></td>
 		        </tr>
@@ -98,7 +107,7 @@
 		</table>
     </div>
     
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="categoriesUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
@@ -108,39 +117,51 @@
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	      <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>id</span><input id="id" disabled="disabled"/>
-			    </div>
-		  </div>
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Montant</span><input id="amount" disabled="disabled"/>
-		        </div>
-		  </div>    
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Type</span><input id="type" disabled="disabled"/>
-		  		</div>
-		  </div>    
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Code</span><input id="code" disabled="disabled"/>
-		  		</div>
-		  </div>	    
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Category</span><input id="categoryPopup"/>
+	      <form th:fragment="formEditPopup" id="updateCategories" action="#" th:action="@{/updateAccountCategories}" th:object="${accountDTO}" method="post">
+			    	<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<span>id</span> <input id="account_id" type="text" th:field="*{id}"/>
+					    </div>
+					</div>
+				   <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Montant</span> <input id = "amount" type="text" th:field="*{amount}"/>
+				        </div>
+				  </div>    
+				  <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Type</span><input id="type" type="text" th:field="*{type}"disabled="disabled"/>
+				  		</div>
+				  </div>    
+				  <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Code</span><input id="code" type="text" th:field="*{code}" disabled="disabled"/>
+				  		</div>
+				  </div>	   
+		    	<div class =" row col-lg-12">
+					<div class ="col-lg-4 offset-lg-2 text-center">
+						<select id = "category_id" th:field="*{category_id}" onchange="changeSubCategory()">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="category : ${categories}"
+					            th:value="${category.id}"
+					            th:text="${category.label}">
+					    	</option>
+						</select>
+					</div>
 				</div>
-		  </div>
-		  <div class =" row col-lg-12">
-			    <div class ="col-lg-4 offset-lg-2 text-center">
-			      	<span>Sous category</span><input id="subCategoryPopup"/>
+				<div class =" row col-lg-12">
+					<div class ="col-lg-4 offset-lg-2 text-center">
+						<select id = "subCategory_id" th:field="*{subCategory_id}">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="subCategory : ${subCategories}"
+					            th:value="${subCategory.id}"
+					            th:text="${subCategory.label}">
+					    	</option>
+						</select>
+					</div>
 				</div>
-		  </div>
-			    
-	      	
-	        
+	   		</form>
+	      
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -154,42 +175,44 @@
 		
      
      function edit(id){
-    	 $("#id").val(id);
     	
     	 $.ajax({
    		  method: "GET",
    		  url: "account",
-   		  data: {id: $("#id").val()},
-   		  success:function(account) {
-   			console.log(account);
-   			console.log(account.category);
-   			console.log(account.subCategory);
-   			$("#amount").val(account.amount);
-   			$("#type").val(account.type);
-   			$("#code").val(account.code);
-   			$("#categoryPopup").val(account.category);
-   			$("#subCategoryPopup").val(account.subCategory);
+   		  data: {id: id},
+   		  success:function(fragment) {
+ 			$("#updateCategories").replaceWith(fragment);
+   			
    		  }
    		});
     	 
-    	 $('#exampleModal').modal({
+    	 $('#categoriesUpdateModal').modal({
     		    show: true
     	}); 
      }
      
+     function changeSubCategory() {
+    	 console.log("dedans");
+    	 $.ajax({
+      		  method: "GET",
+      		  url: "updateSubCategory",
+      		  data: {category: $("#category_id").val(),
+      			  id: $('#account_id').val()},
+      		  success:function(fragment) {
+      			console.log("SUCCESS");
+      			console.log(fragment);
+    			$("#updateCategories").replaceWith(fragment);
+      			
+      		  }
+      		});
+     }
+     
      function save(){
     	console.log("SAVE");
-    	 $.ajax({
-      		  method: "POST",
-      		  url: "updateAccountRecap",
-      		  data: {id: $("#id").val(), category: $("#categoryPopup").val(),
-      			  subCategory: $("#subCategoryPopup").val()},
-      		  success:function(account) {
-      			console.log(account);
-      		  }
-      		}); 
+    	 $('#updateCategories').submit();
+    	 location.reload();
     	 $(function () {
-    		   $('#exampleModal').modal('toggle');
+    		   $('#categoriesUpdateModal').modal('toggle');
     	});
     	 
      }
@@ -223,9 +246,30 @@
     	} );
      
      
+	   function updateSubCategories(){
+		   $.ajax({
+	    		  method: "GET",
+	    		  url: "updateSubCategories",
+	    		  data: {category: $("#category").val(),
+	    			  subCategory: $("#subCategory").val(),
+	    			  dateFrom: $("#dateFrom").val(),
+	    			  dateTo: $("#dateTo").val(),
+	    			  expensesOnly: $("#expensesOnly").val()},
+	    		  success:function(fragment) {
+	    		        $("#accountForm").replaceWith(fragment);
+	    		        datePicker();
+	    		    }
+	    		});
+	   }
+	   
+	   
      $(document).ready(function(){
-    	 ajax();
-    	 $('#list').DataTable({
+    	 datePicker();
+    	 datatable();
+     });
+     
+     function datatable() {
+		$('#list').DataTable({
     		 
     	     columnDefs: [
     	         { type: 'date-euro', targets: 0, orderable: true },
@@ -234,36 +278,26 @@
     	       searching: false,
     	       
     	    });
-     });
+     }
      
+     function datePicker(){
+    	 $( "#dateFrom, #dateTo" ).datepicker({
+ 	    	altField: "#datepicker",
+ 	    	closeText: 'Fermer',
+ 	    	prevText: '<',
+ 	    	nextText: '>',
+ 	    	currentText: 'Aujourd\'hui',
+ 	    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+ 	    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+ 	    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+ 	    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+ 	    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+ 	    	weekHeader: 'Sem.',
+ 	    	dateFormat: 'dd/mm/yy'
+ 	    	});
+     }
 		  
-	   function ajax()
-	   {
-		   $.ajax({
-	    		  method: "GET",
-	    		  url: "getCategory",
-	    		  data: {category: $("#category").val()},
-	    		  success:function(result) {
-	    		        $("#accountForm").append(result);
-		    			 $("#accountForm").html(result);
-		    			 $( "#beginResearchDate, #endResearchDate" ).datepicker({
-		    			    	altField: "#datepicker",
-		    			    	closeText: 'Fermer',
-		    			    	prevText: '<',
-		    			    	nextText: '>',
-		    			    	currentText: 'Aujourd\'hui',
-		    			    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-		    			    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-		    			    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-		    			    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-		    			    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-		    			    	weekHeader: 'Sem.',
-		    			    	dateFormat: 'dd/mm/yy'
-		    			    	});
-	    		    }
-	    		});
-	   }
-	   
+     
 	   
 		</script>
       

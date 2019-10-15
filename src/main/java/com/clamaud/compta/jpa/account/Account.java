@@ -86,6 +86,9 @@ public class Account {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 	
+	@Temporal(TemporalType.DATE)
+	private Date importDate;
+	
 	private double amount;
 	
 	private String type;
@@ -224,6 +227,30 @@ public class Account {
 
 	public void setSubCategory(SubCategory subCategory) {
 		this.subCategory = subCategory;
+	}
+
+	public CategoryEntity getCategoryEntity() {
+		return categoryEntity;
+	}
+
+	public void setCategoryEntity(CategoryEntity categoryEntity) {
+		this.categoryEntity = categoryEntity;
+	}
+
+	public SubCategoryEntity getSubCategoryEntity() {
+		return subCategoryEntity;
+	}
+
+	public void setSubCategoryEntity(SubCategoryEntity subCategoryEntity) {
+		this.subCategoryEntity = subCategoryEntity;
+	}
+
+	public Date getImportDate() {
+		return importDate;
+	}
+
+	public void setImportDate(Date importDate) {
+		this.importDate = importDate;
 	}
 	
 }

@@ -6,5 +6,6 @@ import com.clamaud.compta.jpa.account.CategoryEntity;
 
 public interface CategoryRepository extends CrudRepository<CategoryEntity, Integer> {
 
+	public CategoryEntity findByLabel(String label);
 	
 }

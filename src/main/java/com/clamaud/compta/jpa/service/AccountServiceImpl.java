@@ -1,5 +1,8 @@
 package com.clamaud.compta.jpa.service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.clamaud.compta.jpa.account.Account;
-import com.clamaud.compta.jpa.account.Category;
-import com.clamaud.compta.jpa.account.SubCategory;
+import com.clamaud.compta.jpa.account.CategoryEntity;
+import com.clamaud.compta.jpa.account.SubCategoryEntity;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 
 @Service
@@ -23,19 +26,21 @@ public class AccountServiceImpl implements AccountService {
 		 
 		for (Account account : accounts) {
       	   
-      	   
-      	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(account.getDate(), account.getLabel(), account.getAmount());
+      	   Date dayBefore = Date.from(convertToLocalDateViaInstant(account.getDate()).minusDays(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+      	   Date dayAfter = Date.from(convertToLocalDateViaInstant(account.getDate()).plusDays(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+      	 
+      	   Account accountBdd = accountRepository.findByDateAndLabelAndAmount(dayBefore, dayAfter, account.getLabel(), account.getAmount());
       	   if (accountBdd == null) {
       		   if (!StringUtils.isEmpty(account.getCode())) {
       			   List<Account> accountsfindByCode = accountRepository.findByCode(account.getCode());
       			   if (accountsfindByCode != null && !accountsfindByCode.isEmpty()) {
-      				   List<Category> categories = accountsfindByCode.stream().map(a -> a.getCategory()).collect(Collectors.toList());
+      				   List<CategoryEntity> categories = accountsfindByCode.stream().map(a -> a.getCategoryEntity()).collect(Collectors.toList());
       				   
       				   categories = categories.stream().filter(c -> c != null).collect(Collectors.toList());
       				   
       				   if (!categories.isEmpty()) {
 						
-      					   Category category = categories
+      					 CategoryEntity category = categories
       							   .stream()
       							   .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
       							   .entrySet()
@@ -44,11 +49,11 @@ public class AccountServiceImpl implements AccountService {
       							   .get()
       							   .getKey();
       					   
-      					   SubCategory subCategory = accountsfindByCode
+      					   SubCategoryEntity subCategory = accountsfindByCode
       							   .stream()
-      							   .filter(a -> a.getCategory() == category).collect(Collectors.toList())
+      							   .filter(a -> a.getCategoryEntity().equals(category)).collect(Collectors.toList())
       							   .stream()
-      							   .map(a -> a.getSubCategory())
+      							   .map(a -> a.getSubCategoryEntity())
       							   .collect(Collectors.toList())
       							   .stream()
       							   .collect(Collectors.groupingBy(c -> c, Collectors.counting()))
@@ -58,15 +63,22 @@ public class AccountServiceImpl implements AccountService {
       							   .get()
       							   .getKey();
       					   
-      					   account.setCategory(category);
-      					   account.setSubCategory(subCategory);
+      					   account.setCategoryEntity(category);
+      					   account.setSubCategoryEntity(subCategory);
 					 }
       			   }
 				}
+      		   account.setImportDate(new Date());
       		   accountRepository.save(account);
       	   }
          }
 		
+	}
+	
+	private LocalDate convertToLocalDateViaInstant(Date dateToConvert) {
+	    return dateToConvert.toInstant()
+	      .atZone(ZoneId.systemDefault())
+	      .toLocalDate();
 	}
 
 }
