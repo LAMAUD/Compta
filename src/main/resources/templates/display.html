@@ -111,7 +111,7 @@
 	      <form th:fragment="formEditPopup" id="updateCategories" action="#" th:action="@{/updateAccountCategories}" th:object="${accountDTO}" method="post">
 			    	<div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<span>id</span> <input id="id" type="text" th:field="*{id}"/>
+					    	<span>id</span> <input id="account_id" type="text" th:field="*{id}"/>
 					    </div>
 					</div>
 				   <div class =" row col-lg-12">
@@ -131,11 +131,11 @@
 				  </div>	   
 		    	<div class =" row col-lg-12">
 					<div class ="col-lg-4 offset-lg-2 text-center">
-						<select id = "category_id" th:field="*{categoryEntity}">
+						<select id = "category_id" th:field="*{category_id}" onchange="changeSubCategory()">
 					    	<option selected value=""> -- select an option -- </option>
-					    	<option th:each="state : ${categories}"
-					            th:value="${state}"
-					            th:text="${state.label}">
+					    	<option th:each="category : ${categories}"
+					            th:value="${category.id}"
+					            th:text="${category.label}">
 					    	</option>
 						</select>
 					</div>
@@ -144,9 +144,9 @@
 					<div class ="col-lg-4 offset-lg-2 text-center">
 						<select id = "subCategory_id" th:field="*{subCategory_id}">
 					    	<option selected value=""> -- select an option -- </option>
-					    	<option th:each="state : ${categoryEntity?.subCategories}"
-					            th:value="${state.id}"
-					            th:text="${state.label}">
+					    	<option th:each="subCategory : ${subCategories}"
+					            th:value="${subCategory.id}"
+					            th:text="${subCategory.label}">
 					    	</option>
 						</select>
 					</div>
@@ -166,15 +166,13 @@
 		
      
      function edit(id){
-    	 $("#id").val(id);
     	
     	 $.ajax({
    		  method: "GET",
    		  url: "account",
-   		  data: {id: $("#id").val()},
+   		  data: {id: id},
    		  success:function(fragment) {
-   			console.log("SUCCESS");
- 			$("#formEditPopup").replaceWith(fragment);
+ 			$("#updateCategories").replaceWith(fragment);
    			
    		  }
    		});
@@ -182,6 +180,22 @@
     	 $('#categoriesUpdateModal').modal({
     		    show: true
     	}); 
+     }
+     
+     function changeSubCategory() {
+    	 console.log("dedans");
+    	 $.ajax({
+      		  method: "GET",
+      		  url: "updateSubCategory",
+      		  data: {category: $("#category_id").val(),
+      			  id: $('#account_id').val()},
+      		  success:function(fragment) {
+      			console.log("SUCCESS");
+      			console.log(fragment);
+    			$("#updateCategories").replaceWith(fragment);
+      			
+      		  }
+      		});
      }
      
      function save(){

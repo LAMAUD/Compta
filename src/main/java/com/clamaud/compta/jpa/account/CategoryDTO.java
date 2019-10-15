@@ -1,7 +1,5 @@
 package com.clamaud.compta.jpa.account;
 
-import java.util.Set;
-
 public class CategoryDTO {
 	
 	private Integer id;
@@ -12,7 +10,6 @@ public class CategoryDTO {
 	
 	private String description;
 	
-
 	public Integer getId() {
 		return id;
 	}

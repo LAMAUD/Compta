@@ -3,6 +3,7 @@ package com.clamaud.compta.controller;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.clamaud.compta.jpa.account.Account;
 import com.clamaud.compta.jpa.account.AccountDTO;
 import com.clamaud.compta.jpa.account.Category;
+import com.clamaud.compta.jpa.account.CategoryEntity;
 import com.clamaud.compta.jpa.account.CategoryUtils;
+import com.clamaud.compta.jpa.account.SubCategoryEntity;
 import com.clamaud.compta.jpa.repository.AccountCriteria;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 import com.clamaud.compta.jpa.repository.CategoryRepository;
@@ -93,6 +96,25 @@ public class ComptaDisplayController {
 		return "display :: searchAccount";
 	}
 	
+	@GetMapping("/updateSubCategory")
+	public String updateSubCategory(Model model, @RequestParam("category") Integer category_id,
+			@RequestParam("id") Integer account_id) {
+		
+		CategoryEntity category = categoryRepository.findById(category_id).get();
+		Set<SubCategoryEntity> subCategories = category.getSubCategories();
+		
+		Account account = accountRepository.findById(account_id).get();
+		account.setCategoryEntity(category);
+		AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);
+		
+		model.addAttribute("accountDTO", accountDTO);
+		model.addAttribute("categories", categoryRepository.findAll());
+		model.addAttribute("subCategories", subCategories);
+		
+		return "display :: formEditPopup";
+	}
+	
+	
 	@GetMapping("/account")
 	public String getAccount(Model model, @RequestParam("id") Integer id) {
 		
@@ -111,12 +133,17 @@ public class ComptaDisplayController {
 	
 	@PostMapping("/updateAccountCategories")
 	@ResponseBody
-	public Account updateAccount(@RequestParam("id") Integer id, @RequestParam("category") String category,
-			@RequestParam("subCategory") String subCategory) {
+	public Account updateAccount(Model model, @ModelAttribute AccountDTO accountDTO) {
 		System.out.println("------------------------------------------ DEDANS ------------------------------------------");
-		Account account = accountRepository.findById(id).get();
-		account.setCategory(CategoryUtils.findCategory(category));
-		account.setSubCategory(CategoryUtils.findSubCategory(subCategory));
+		
+		Account account = modelMapper.map(accountDTO, Account.class);
+		CategoryEntity category = categoryRepository.findById(accountDTO.getCategory_id()).get();
+		SubCategoryEntity subCategory = subCategoryRepository.findById(accountDTO.getSubCategory_id()).get();
+		
+		account.setCategoryEntity(category);
+		account.setSubCategoryEntity(subCategory);
+		
+		accountRepository.save(account);
 		
 		return account;
 	}
