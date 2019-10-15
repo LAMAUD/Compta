@@ -9,29 +9,29 @@
       
    <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
    
-   <div th:fragment="searchAccount">
-      	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
+   <div>
+      	<form  th:fragment="searchAccount" id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
 		   <div class ="col-lg-10 offset-lg-1">
 			   <div class ="jumbotron">
 				   <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
 						    <p>Catégorie : 
-						    <select id = "category" th:field="*{category}" onchange="ajax()">
+						    <select id = "category" th:field="*{category_id}" onchange="updateSubCategories()">
 						    	<option selected value=""> -- select an option -- </option>
-						    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
-						            th:value="${state}"
-						            th:text="${state}">
+						    	<option th:each="category : ${categories}"
+						            th:value="${category.id}"
+						            th:text="${category.label}">
 						    	</option>
 							</select>
 							</p>
 						</div>
 						<div class ="col-lg-4 text-center">
 					        <p>Sous Catégorie : 
-					        <select th:field="*{subCategory}">
+					        <select id = "subCategory" th:field="*{subCategory_id}">
 					        	<option selected value=""> -- select an option -- </option>
-						    	<option th:each="state,rowStat : ${T(com.clamaud.compta.jpa.account.SubCategory).values().?[category == '__${category}__']}"
-						            th:value="${state}"
-						            th:text="${state}">
+						    	<option th:each="subCategory : ${subCategories}"
+						            th:value="${subCategory.id}"
+						            th:text="${subCategory.label}">
 						    	</option>
 							</select>
 					        </p>
@@ -39,15 +39,20 @@
 			        </div>
 			        <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Du : <input type="text" th:field="*{dateFrom}" id="beginResearchDate"/></p>
+					    	<p>Du : <input id = "dateFrom" type="text" th:field="*{dateFrom}"/></p>
 					    </div>
 					    <div class ="col-lg-4 text-center">
-					    	<p>Au : <input type="text" th:field="*{dateTo}" id="endResearchDate"/></p>
+					    	<p>Au : <input id = "dateTo" type="text" th:field="*{dateTo}"/></p>
 					    </div>
 					</div>
 					<div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Dépenses : <input type="checkbox" th:field="*{expensesOnly}" /></p>
+					    	<p>Dépenses : <input id = "expensesOnly" type="checkbox" th:field="*{expensesOnly}" /></p>
+					    </div>
+					</div>
+					<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<p>Non catégorisés : <input id = "nonCategorised" type="checkbox" th:field="*{nonCategorised}" /></p>
 					    </div>
 					</div>
 			        <div class ="row">
@@ -60,7 +65,11 @@
 	        
     	</form>	
    </div>
-   
+   <div class ="row">
+		<div class ="col-lg-12 text-center">
+			<span style="font-size: 40px" id="balance" th:text="${balance}"> Balance </span><span style="font-size: 40px">€</span>
+		</div>
+	</div>
    
    <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
       	<table id="list" class="table">
@@ -82,15 +91,15 @@
 		            <td colspan="2"> Pas de compte importé </td>
 		        </tr>
 		        <tr th:each="account : ${accounts}">
-		            <td><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
-		            <td><span th:text="${account.amount}"> Montant </span></td>
-		            <td><span th:text="${account.type}"> Type </span></td>
-		            <td><span th:text="${account.code}"> Code </span></td>
-		            <td><span th:text="${account.user}"> Utilisateur </span></td>
-		            <td><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
-		            <td><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
-		            <td><span th:text="${account.balance}"> Solde </span></td>
-		            <td><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
+		            <td class="col-lg-1"><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
+		            <td class="col-lg-1"><span th:text="${account.amount}"> Montant </span></td>
+		            <td class="col-lg-1"><span th:text="${account.type}"> Type </span></td>
+		            <td class="col-lg-2"><span th:text="${account.code}"> Code </span></td>
+		            <td class="col-lg-1"><span th:text="${account.user}"> Utilisateur </span></td>
+		            <td class="col-lg-2"><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
+		            <td class="col-lg-2"><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
+		            <td class="col-lg-1"><span th:text="${account.balance}"> Solde </span></td>
+		            <td class="col-lg-1"><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
 		             Edit
 					</button></td>
 		        </tr>
@@ -200,7 +209,8 @@
      
      function save(){
     	console.log("SAVE");
-    	 $('#categoriesUpdateModal').submit();
+    	 $('#updateCategories').submit();
+    	 location.reload();
     	 $(function () {
     		   $('#categoriesUpdateModal').modal('toggle');
     	});
@@ -236,9 +246,30 @@
     	} );
      
      
+	   function updateSubCategories(){
+		   $.ajax({
+	    		  method: "GET",
+	    		  url: "updateSubCategories",
+	    		  data: {category: $("#category").val(),
+	    			  subCategory: $("#subCategory").val(),
+	    			  dateFrom: $("#dateFrom").val(),
+	    			  dateTo: $("#dateTo").val(),
+	    			  expensesOnly: $("#expensesOnly").val()},
+	    		  success:function(fragment) {
+	    		        $("#accountForm").replaceWith(fragment);
+	    		        datePicker();
+	    		    }
+	    		});
+	   }
+	   
+	   
      $(document).ready(function(){
-    	 ajax();
-    	 $('#list').DataTable({
+    	 datePicker();
+    	 datatable();
+     });
+     
+     function datatable() {
+		$('#list').DataTable({
     		 
     	     columnDefs: [
     	         { type: 'date-euro', targets: 0, orderable: true },
@@ -247,36 +278,26 @@
     	       searching: false,
     	       
     	    });
-     });
+     }
      
+     function datePicker(){
+    	 $( "#dateFrom, #dateTo" ).datepicker({
+ 	    	altField: "#datepicker",
+ 	    	closeText: 'Fermer',
+ 	    	prevText: '<',
+ 	    	nextText: '>',
+ 	    	currentText: 'Aujourd\'hui',
+ 	    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+ 	    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+ 	    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+ 	    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+ 	    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+ 	    	weekHeader: 'Sem.',
+ 	    	dateFormat: 'dd/mm/yy'
+ 	    	});
+     }
 		  
-	   function ajax()
-	   {
-		   $.ajax({
-	    		  method: "GET",
-	    		  url: "getCategory",
-	    		  data: {category: $("#category").val()},
-	    		  success:function(result) {
-	    		        $("#accountForm").append(result);
-		    			 $("#accountForm").html(result);
-		    			 $( "#beginResearchDate, #endResearchDate" ).datepicker({
-		    			    	altField: "#datepicker",
-		    			    	closeText: 'Fermer',
-		    			    	prevText: '<',
-		    			    	nextText: '>',
-		    			    	currentText: 'Aujourd\'hui',
-		    			    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-		    			    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-		    			    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-		    			    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-		    			    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-		    			    	weekHeader: 'Sem.',
-		    			    	dateFormat: 'dd/mm/yy'
-		    			    	});
-	    		    }
-	    		});
-	   }
-	   
+     
 	   
 		</script>
       

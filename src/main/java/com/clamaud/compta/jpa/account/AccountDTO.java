@@ -139,7 +139,7 @@ public class AccountDTO {
 
 	public Integer getCategory_id() {
 		
-		return categoryEntity != null ? categoryEntity.getId() : null;
+		return categoryEntity != null ? categoryEntity.getId() : category_id;
 	}
 
 	public void setCategory_id(Integer category_id) {
@@ -147,12 +147,13 @@ public class AccountDTO {
 	}
 
 	public Integer getSubCategory_id() {
-		return subCategoryEntity != null ? subCategoryEntity.getId() : null;
+		return subCategoryEntity != null ? subCategoryEntity.getId() : subCategory_id;
 	}
 
 	public void setSubCategory_id(Integer subCategory_id) {
 		this.subCategory_id = subCategory_id;
 	}
+	
 
 
 }
