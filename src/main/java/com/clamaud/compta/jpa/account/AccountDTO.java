@@ -1,5 +1,7 @@
 package com.clamaud.compta.jpa.account;
 
+import java.text.DateFormatSymbols;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.persistence.EnumType;
@@ -11,7 +13,7 @@ public class AccountDTO {
 	
 	private Integer id;
 	
-	@DateTimeFormat (pattern="dd/MM/yyyy") 
+	@DateTimeFormat (pattern="yyyy-MM-dd") 
 	private Date date;
 	
 	private double amount;
@@ -25,12 +27,21 @@ public class AccountDTO {
 	private String label;
 	
 	private double balance;
+	
+	private CategoryDTO categoryEntity;
+	
+	private SubCategoryDTO subCategoryEntity;
+	
+	private Integer category_id;
+	
+	private Integer subCategory_id;
 
 	@Enumerated(EnumType.STRING)
 	private Category category;
 	
 	@Enumerated(EnumType.STRING)
 	private SubCategory subCategory;
+	
 	
 	public Integer getId() {
 		return id;
@@ -112,7 +123,67 @@ public class AccountDTO {
 		this.balance = balance;
 	}
 
+	public CategoryDTO getCategoryEntity() {
+		return categoryEntity;
+	}
 
+	public void setCategoryEntity(CategoryDTO categoryEntity) {
+		this.categoryEntity = categoryEntity;
+	}
+
+	public SubCategoryDTO getSubCategoryEntity() {
+		return subCategoryEntity;
+	}
+
+	public void setSubCategoryEntity(SubCategoryDTO subCategoryEntity) {
+		this.subCategoryEntity = subCategoryEntity;
+	}
+
+	public Integer getCategory_id() {
+		
+		return categoryEntity != null ? categoryEntity.getId() : category_id;
+	}
+	
+	public String getCategory_Name() {
+		
+		return categoryEntity != null ? categoryEntity.getCode() : "";
+	}
+
+	public void setCategory_id(Integer category_id) {
+		this.category_id = category_id;
+	}
+
+	public Integer getSubCategory_id() {
+		return subCategoryEntity != null ? subCategoryEntity.getId() : subCategory_id;
+	}
+	
+	public String getSubCategory_Name() {
+		return subCategoryEntity != null ? subCategoryEntity.getCode() : "";
+	}
+
+	public void setSubCategory_id(Integer subCategory_id) {
+		this.subCategory_id = subCategory_id;
+	}
+	
+	public Integer getMonth() {
+		return date.getMonth();
+	}
+	
+	public String getMonthString() {
+		return getMonthForInt(getMonth());
+	}
+	
+	
+	public String getMonthForInt(int num) {
+        String month = "wrong";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11 ) {
+            month = months[num];
+        }
+        return month;
+    }
+	
 
 
 }

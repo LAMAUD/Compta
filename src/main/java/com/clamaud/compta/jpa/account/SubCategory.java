@@ -19,6 +19,7 @@ public enum SubCategory {
 	DIVERS(Category.VACANCES.toString()),
 	CEDRIC(Category.CREDIT.toString()),
 	MATHILDE(Category.CREDIT.toString()),
+	AUTRE_C(Category.CREDIT.toString()),
 	DEBUT(Category.CREDIT.toString()),
 	AGIO(Category.FRAIS_BANCAIRE.toString()),
 	ANNUELS(Category.FRAIS_BANCAIRE.toString()),
@@ -27,7 +28,9 @@ public enum SubCategory {
 	PERSO_MATHILDE(Category.PERSO.toString()),
 	PERSO_CEDRIC(Category.PERSO.toString()),
 	SANTE(Category.SANTE.toString()),
-	CHAT(Category.CHAT.toString());
+	CHAT(Category.CHAT.toString()),
+	ASSURANCE_V(Category.VOITURE.toString()),
+	REPARATION_V(Category.VOITURE.toString()),;
 	
 	private String category;
 	

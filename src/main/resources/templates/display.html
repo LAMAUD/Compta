@@ -9,29 +9,29 @@
       
    <span th:text="${#dates.format(date,'dd MMMM yyyy')}"> Date </span>
    
-   <div th:fragment="form">
-      	<form id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
+   <div>
+      	<form  th:fragment="searchAccount" id="accountForm" action="#" th:action="@{/search}" th:object="${criteria}" method="post">
 		   <div class ="col-lg-10 offset-lg-1">
 			   <div class ="jumbotron">
 				   <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
 						    <p>Catégorie : 
-						    <select id = "category" th:field="*{category}" onchange="ajax()">
+						    <select id = "category" th:field="*{category_id}" onchange="updateSubCategories()">
 						    	<option selected value=""> -- select an option -- </option>
-						    	<option th:each="state : ${T(com.clamaud.compta.jpa.account.Category).values()}"
-						            th:value="${state}"
-						            th:text="${state}">
+						    	<option th:each="category : ${categories}"
+						            th:value="${category.id}"
+						            th:text="${category.label}">
 						    	</option>
 							</select>
 							</p>
 						</div>
 						<div class ="col-lg-4 text-center">
 					        <p>Sous Catégorie : 
-					        <select th:field="*{subCategory}">
+					        <select id = "subCategory" th:field="*{subCategory_id}">
 					        	<option selected value=""> -- select an option -- </option>
-						    	<option th:each="state,rowStat : ${T(com.clamaud.compta.jpa.account.SubCategory).values().?[category == '__${category}__']}"
-						            th:value="${state}"
-						            th:text="${state}">
+						    	<option th:each="subCategory : ${subCategories}"
+						            th:value="${subCategory.id}"
+						            th:text="${subCategory.label}">
 						    	</option>
 							</select>
 					        </p>
@@ -39,15 +39,20 @@
 			        </div>
 			        <div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Du : <input type="text" th:field="*{dateFrom}" id="beginResearchDate"/></p>
+					    	<p>Du : <input id = "dateFrom" type="text" th:field="*{dateFrom}"/></p>
 					    </div>
 					    <div class ="col-lg-4 text-center">
-					    	<p>Au : <input type="text" th:field="*{dateTo}" id="endResearchDate"/></p>
+					    	<p>Au : <input id = "dateTo" type="text" th:field="*{dateTo}"/></p>
 					    </div>
 					</div>
 					<div class =" row col-lg-12">
 					    <div class ="col-lg-4 offset-lg-2 text-center">
-					    	<p>Dépenses : <input type="checkbox" th:field="*{expensesOnly}" /></p>
+					    	<p>Dépenses : <input id = "expensesOnly" type="checkbox" th:field="*{expensesOnly}" /></p>
+					    </div>
+					</div>
+					<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<p>Non catégorisés : <input id = "nonCategorised" type="checkbox" th:field="*{nonCategorised}" /></p>
 					    </div>
 					</div>
 			        <div class ="row">
@@ -60,73 +65,324 @@
 	        
     	</form>	
    </div>
+   <div class ="row">
+		<div class ="col-lg-12 text-center">
+			<span style="font-size: 40px" id="balance" th:text="${balance}"> Balance </span><span style="font-size: 40px">€</span>
+		</div>
+	</div>
    
-   
-   <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
-      	<table class="table">
-		    <thead>
-		        <tr>
-		            <th scope="col"> Date </th>
-		            <th scope="col"> Montant </th>
-		            <th scope="col"> Type </th>
-		            <th scope="col"> Code </th>
-		            <th scope="col"> Utilisateur </th>
-		            <th scope="col"> Catégorie </th>
-		            <th scope="col"> Sous catégorie </th>
-		            <th scope="col"> Solde </th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		    <tr th:if="${accounts.empty}">
-		            <td colspan="2"> Pas de compte importé </td>
-		        </tr>
-		        <tr th:each="account : ${accounts}">
-		            <td><span th:text="${#dates.format(account.date,'dd MMMM yyyy')}"> Date </span></td>
-		            <td><span th:text="${account.amount}"> Montant </span></td>
-		            <td><span th:text="${account.type}"> Type </span></td>
-		            <td><span th:text="${account.code}"> Code </span></td>
-		            <td><span th:text="${account.user}"> Utilisateur </span></td>
-		            <td><span th:text="${account.category}"> Catégorie </span></td>
-		            <td><span th:text="${account.subCategory}"> Sous catégorie </span></td>
-		            <td><span th:text="${account.balance}"> Solde </span></td>
-		        </tr>
-		    </tbody>
-		</table>
+   <div class ="row">
+	   <div th:fragment="result" class ="col-lg-8">  
+	      	<table id="list" class="table">
+			    <thead>
+			        <tr>
+			            <th scope="col"> Date </th>
+			            <th scope="col"> Montant </th>
+			            <th scope="col"> Type </th>
+			            <th scope="col"> Code </th>
+			            <th scope="col"> Utilisateur </th>
+			            <th scope="col"> Catégorie </th>
+			            <th scope="col"> Sous catégorie </th>
+			            <th scope="col"> Solde </th>
+			            <th scope="col"> Editer </th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			    <tr th:if="${accounts.empty}">
+			            <td colspan="2"> Pas de compte importé </td>
+			        </tr>
+			        <tr th:each="account : ${accounts}">
+			            <td class="col-lg-1"><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
+			            <td class="col-lg-1"><span th:text="${account.amount}"> Montant </span></td>
+			            <td class="col-lg-1"><span th:text="${account.type}"> Type </span></td>
+			            <td class="col-lg-2"><span th:text="${account.code}"> Code </span></td>
+			            <td class="col-lg-1"><span th:text="${account.user}"> Utilisateur </span></td>
+			            <td class="col-lg-2"><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
+			            <td class="col-lg-2"><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
+			            <td class="col-lg-1"><span th:text="${account.balance}"> Solde </span></td>
+			            <td class="col-lg-1"><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
+			             Edit
+						</button></td>
+			        </tr>
+			    </tbody>
+			</table>
+	    </div>
+	    <div class="col-lg-4">
+	    	<div id="chart" style="width: 700px; height: 300px;"></div>
+	    </div>
     </div>
+    
+    <div class="modal fade" id="categoriesUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+	          <span aria-hidden="true">&times;</span>
+	        </button>
+	      </div>
+	      <div class="modal-body">
+	      <form th:fragment="formEditPopup" id="updateCategories" action="#" th:action="@{/updateAccountCategories}" th:object="${accountDTO}" method="post">
+			    	<div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					    	<span>id</span> <input id="account_id" type="text" th:field="*{id}"/>
+					    </div>
+					</div>
+				   <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Montant</span> <input id = "amount" type="text" th:field="*{amount}"/>
+				        </div>
+				  </div>    
+				  <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Type</span><input id="type" type="text" th:field="*{type}"disabled="disabled"/>
+				  		</div>
+				  </div>    
+				  <div class =" row col-lg-12">
+					    <div class ="col-lg-4 offset-lg-2 text-center">
+					      	<span>Code</span><input id="code" type="text" th:field="*{code}" disabled="disabled"/>
+				  		</div>
+				  </div>	   
+		    	<div class =" row col-lg-12">
+					<div class ="col-lg-4 offset-lg-2 text-center">
+						<select id = "category_id" th:field="*{category_id}" onchange="changeSubCategory()">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="category : ${categories}"
+					            th:value="${category.id}"
+					            th:text="${category.label}">
+					    	</option>
+						</select>
+					</div>
+				</div>
+				<div class =" row col-lg-12">
+					<div class ="col-lg-4 offset-lg-2 text-center">
+						<select id = "subCategory_id" th:field="*{subCategory_id}">
+					    	<option selected value=""> -- select an option -- </option>
+					    	<option th:each="subCategory : ${subCategories}"
+					            th:value="${subCategory.id}"
+					            th:text="${subCategory.label}">
+					    	</option>
+						</select>
+					</div>
+				</div>
+	   		</form>
+	      
+	      </div>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+	        <button type="button" class="btn btn-primary" onclick="save()">Save changes</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
     
      <script>
 		
-     $(document).ready(function(){
-    	 ajax();
-     });
      
-		  
-	   function ajax()
-	   {
+     function edit(id){
+    	
+    	 $.ajax({
+   		  method: "GET",
+   		  url: "account",
+   		  data: {id: id},
+   		  success:function(fragment) {
+ 			$("#updateCategories").replaceWith(fragment);
+   			
+   		  }
+   		});
+    	 
+    	 $('#categoriesUpdateModal').modal({
+    		    show: true
+    	}); 
+     }
+     
+     function changeSubCategory() {
+    	 console.log("dedans");
+    	 $.ajax({
+      		  method: "GET",
+      		  url: "updateSubCategory",
+      		  data: {category: $("#category_id").val(),
+      			  id: $('#account_id').val()},
+      		  success:function(fragment) {
+      			console.log("SUCCESS");
+      			console.log(fragment);
+    			$("#updateCategories").replaceWith(fragment);
+      			
+      		  }
+      		});
+     }
+     
+     function save(){
+    	      
+    	 var category = $('#category').val();
+    	 var subCategory = $('#subCategory').val();
+    	 var dateFrom = $('#dateFrom').val();
+    	 var dateTo = $('#dateTo').val();
+    	 var expensesOnly = $('#expensesOnly').val();
+    	 var nonCategorised = $('#nonCategorised').val();
+    	 
+    	console.log("SAVE");
+    	 $('#updateCategories').submit();
+    	 
+    	 $('#category').val(category);
+    	 $('#subCategory').val(subCategory);
+    	 $('#dateFrom').val(dateFrom);
+    	 $('#dateTo').val(dateTo);
+    	 $('#expensesOnly').val(expensesOnly);
+    	 $('#nonCategorised').val(nonCategorised);
+    	 
+    	 $('#accountForm').submit();
+    	 
+    	 $(function () {
+    		   $('#categoriesUpdateModal').modal('toggle');
+    	});
+    	 
+     }
+     
+     jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+    	    "date-euro-pre": function ( a ) {
+    	        var x;
+    	 
+    	        if ( $.trim(a) !== '' ) {
+    	        	a = a.replace('<span>', '');
+    	        	a = a.replace('</span>', '');
+    	            var frDatea = $.trim(a).split(' ');
+    	            var frTimea = (undefined != frDatea[1]) ? frDatea[1].split(':') : [00,00,00];
+    	            var frDatea2 = frDatea[0].split('/');
+    	            x = (frDatea2[2] + frDatea2[1] + frDatea2[0] + frTimea[0] + frTimea[1] + ((undefined != frTimea[2]) ? frTimea[2] : 0)) * 1;
+    	        }
+    	        else {
+    	            x = Infinity;
+    	        }
+    	 
+    	        return x;
+    	    },
+    	 
+    	    "date-euro-asc": function ( a, b ) {
+    	        return a - b;
+    	    },
+    	 
+    	    "date-euro-desc": function ( a, b ) {
+    	        return b - a;
+    	    }
+    	} );
+     
+     
+	   function updateSubCategories(){
 		   $.ajax({
 	    		  method: "GET",
-	    		  url: "getCategory",
-	    		  data: {category: $("#category").val()},
-	    		  success:function(result) {
-	    		        $("#accountForm").append(result);
-		    			 $("#accountForm").html(result);
-		    			 $( "#beginResearchDate, #endResearchDate" ).datepicker({
-		    			    	altField: "#datepicker",
-		    			    	closeText: 'Fermer',
-		    			    	prevText: '<',
-		    			    	nextText: '>',
-		    			    	currentText: 'Aujourd\'hui',
-		    			    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-		    			    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-		    			    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-		    			    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-		    			    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-		    			    	weekHeader: 'Sem.',
-		    			    	dateFormat: 'dd/mm/yy'
-		    			    	});
+	    		  url: "updateSubCategories",
+	    		  data: {category: $("#category").val(),
+	    			  subCategory: $("#subCategory").val(),
+	    			  dateFrom: $("#dateFrom").val(),
+	    			  dateTo: $("#dateTo").val(),
+	    			  expensesOnly: $("#expensesOnly").val()},
+	    		  success:function(fragment) {
+	    		        $("#accountForm").replaceWith(fragment);
+	    		        datePicker();
 	    		    }
 	    		});
 	   }
+	   
+	   
+     $(document).ready(function(){
+    	 datePicker();
+    	 datatable();
+     });
+     
+     function datatable() {
+		$('#list').DataTable({
+    		 
+    	     columnDefs: [
+    	         { type: 'date-euro', targets: 0, orderable: true },
+    	         { targets: [1,2,3,4,5,6,7], orderable: false}
+    	       ],
+    	       searching: false,
+    	       
+    	    });
+     }
+     
+     function datePicker(){
+    	 $( "#dateFrom, #dateTo" ).datepicker({
+ 	    	altField: "#datepicker",
+ 	    	closeText: 'Fermer',
+ 	    	prevText: '<',
+ 	    	nextText: '>',
+ 	    	currentText: 'Aujourd\'hui',
+ 	    	monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+ 	    	monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+ 	    	dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+ 	    	dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+ 	    	dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+ 	    	weekHeader: 'Sem.',
+ 	    	dateFormat: 'dd/mm/yy'
+ 	    	});
+     }
+     
+     google.charts.load('current', {'packages':['corechart']});
+     google.charts.setOnLoadCallback(drawChart);
+
+     function drawChart() {
+    	 console.log("ici");
+    	 console.log($('#subCategory').val());
+    	 
+    	 var collect = "[[${collect}]]";
+    	 console.log(collect);
+    	 collect = collect.replace(/&quot;/g, "\"");
+    	 var collectJson = JSON.parse(collect);
+    	 var pieChart = new Array();
+    	 
+    	 if($('#subCategory').val() == "" ) {
+	    		 console.log('piechart');
+		    	 var begin = ['Category','value'];
+		    	 pieChart.push(begin);
+		    	 $.each(collectJson, function(i, item) {
+		    		 var catego = new Array( i, Math.abs(collectJson[i]) );
+		    		 pieChart.push(catego);
+		    		});
+		    	 
+		       var data = google.visualization.arrayToDataTable(pieChart);
+		
+		       var options = {
+		         title: 'My Daily Activities'
+		       };
+		       
+		       var chart = new google.visualization.PieChart(document.getElementById('chart'));
+		       chart.draw(data, options);
+    	 } else {
+    		 console.log('autre');
+    		 var begin = ["Element", "Density", { role: "style" } ];
+    		 pieChart.push(begin);
+    		 $.each(collectJson, function(i, item) {
+	    		 var catego = new Array( i, Math.abs(collectJson[i]),  "color: #e5e4e2");
+	    		 pieChart.push(catego);
+	    		});
+    		 
+    		 console.log(pieChart);
+	       var data = google.visualization.arrayToDataTable(pieChart);
+	
+	         var view = new google.visualization.DataView(data);
+	         view.setColumns([0, 1,
+	                          { calc: "stringify",
+	                            sourceColumn: 1,
+	                            type: "string",
+	                            role: "annotation" },
+	                          2]);
+	
+	         var options = {
+	           title: "Dépenses par mois",
+	           width: 600,
+	           height: 400,
+	           bar: {groupWidth: "95%"},
+	           legend: { position: "none" },
+	         };
+	         var chart = new google.visualization.ColumnChart(document.getElementById("chart"));
+	         chart.draw(view, options);
+    	 }
+     }
+
+		  
+     
 	   
 		</script>
       

@@ -4,14 +4,11 @@ import java.util.Date;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.clamaud.compta.jpa.account.Category;
-import com.clamaud.compta.jpa.account.SubCategory;
-
 public class AccountCriteria {
 	
-	private Category category;
+	private Integer category_id;
 	
-	private SubCategory subCategory;
+	private Integer subCategory_id;
 	
 	@DateTimeFormat (pattern="dd/MM/yyyy")
 	private Date dateFrom;
@@ -20,21 +17,24 @@ public class AccountCriteria {
 	private Date dateTo;
 	
 	private boolean expensesOnly;
+	
+	private boolean nonCategorised;
 
-	public Category getCategory() {
-		return category;
+
+	
+	
+	public AccountCriteria() {
+		super();
 	}
 
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
-	public SubCategory getSubCategory() {
-		return subCategory;
-	}
-
-	public void setSubCategory(SubCategory subCategory) {
-		this.subCategory = subCategory;
+	public AccountCriteria(Integer category_id, Integer subCategory_id, Date dateFrom, Date dateTo,
+			boolean expensesOnly) {
+		super();
+		this.category_id = category_id;
+		this.subCategory_id = subCategory_id;
+		this.dateFrom = dateFrom;
+		this.dateTo = dateTo;
+		this.expensesOnly = expensesOnly;
 	}
 
 	public Date getDateFrom() {
@@ -59,6 +59,30 @@ public class AccountCriteria {
 
 	public void setExpensesOnly(boolean expensesOnly) {
 		this.expensesOnly = expensesOnly;
+	}
+
+	public Integer getCategory_id() {
+		return category_id;
+	}
+
+	public void setCategory_id(Integer category_id) {
+		this.category_id = category_id;
+	}
+
+	public Integer getSubCategory_id() {
+		return subCategory_id;
+	}
+
+	public void setSubCategory_id(Integer subCategory_id) {
+		this.subCategory_id = subCategory_id;
+	}
+
+	public boolean isNonCategorised() {
+		return nonCategorised;
+	}
+
+	public void setNonCategorised(boolean nonCategorised) {
+		this.nonCategorised = nonCategorised;
 	}
 
 	

@@ -7,11 +7,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class Account {
@@ -86,6 +86,9 @@ public class Account {
 	@Temporal(TemporalType.DATE)
 	private Date date;
 	
+	@Temporal(TemporalType.DATE)
+	private Date importDate;
+	
 	private double amount;
 	
 	private String type;
@@ -98,6 +101,12 @@ public class Account {
 	
 	@Enumerated(EnumType.STRING)
 	private Category category;
+	
+	@ManyToOne
+	private CategoryEntity categoryEntity;
+	
+	@ManyToOne	
+	private SubCategoryEntity subCategoryEntity;
 	
 	@Enumerated(EnumType.STRING)
 	private SubCategory subCategory;
@@ -218,6 +227,30 @@ public class Account {
 
 	public void setSubCategory(SubCategory subCategory) {
 		this.subCategory = subCategory;
+	}
+
+	public CategoryEntity getCategoryEntity() {
+		return categoryEntity;
+	}
+
+	public void setCategoryEntity(CategoryEntity categoryEntity) {
+		this.categoryEntity = categoryEntity;
+	}
+
+	public SubCategoryEntity getSubCategoryEntity() {
+		return subCategoryEntity;
+	}
+
+	public void setSubCategoryEntity(SubCategoryEntity subCategoryEntity) {
+		this.subCategoryEntity = subCategoryEntity;
+	}
+
+	public Date getImportDate() {
+		return importDate;
+	}
+
+	public void setImportDate(Date importDate) {
+		this.importDate = importDate;
 	}
 	
 }
