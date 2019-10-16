@@ -69,8 +69,10 @@ public class ComptaDisplayController {
 		Iterable<Account> accounts = accountRepository.multiCriteriaSearch(criteria);
 		Date date = accountRepository.findLatestDateAccount();
 		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
-		
-		double balance = accountsDTO.get(accountsDTO.size() - 1).getBalance();
+		double balance = 0.0;
+		if (accountsDTO.size() > 0) {
+			balance = accountsDTO.get(accountsDTO.size() - 1).getBalance();
+		}
 		model.addAttribute("balance", balance);
 		model.addAttribute("date", date);
 		model.addAttribute("accounts", accountsDTO);

@@ -208,9 +208,26 @@
      }
      
      function save(){
+    	      
+    	 var category = $('#category').val();
+    	 var subCategory = $('#subCategory').val();
+    	 var dateFrom = $('#dateFrom').val();
+    	 var dateTo = $('#dateTo').val();
+    	 var expensesOnly = $('#expensesOnly').val();
+    	 var nonCategorised = $('#nonCategorised').val();
+    	 
     	console.log("SAVE");
     	 $('#updateCategories').submit();
-    	 location.reload();
+    	 
+    	 $('#category').val(category);
+    	 $('#subCategory').val(subCategory);
+    	 $('#dateFrom').val(dateFrom);
+    	 $('#dateTo').val(dateTo);
+    	 $('#expensesOnly').val(expensesOnly);
+    	 $('#nonCategorised').val(nonCategorised);
+    	 
+    	 $('#accountForm').submit();
+    	 
     	 $(function () {
     		   $('#categoriesUpdateModal').modal('toggle');
     	});
