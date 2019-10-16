@@ -108,7 +108,7 @@
 			</table>
 	    </div>
 	    <div class="col-lg-4">
-	    	<div id="piechart" style="width: 700px; height: 300px;"></div>
+	    	<div id="chart" style="width: 700px; height: 300px;"></div>
 	    </div>
     </div>
     
@@ -323,27 +323,62 @@
      google.charts.setOnLoadCallback(drawChart);
 
      function drawChart() {
+    	 console.log("ici");
+    	 console.log($('#subCategory').val());
     	 
     	 var collect = "[[${collect}]]";
+    	 console.log(collect);
     	 collect = collect.replace(/&quot;/g, "\"");
     	 var collectJson = JSON.parse(collect);
     	 var pieChart = new Array();
-    	 var begin = ['Category','value'];
-    	 pieChart.push(begin);
-    	 $.each(collectJson, function(i, item) {
-    		 var catego = new Array( i, Math.abs(collectJson[i]) );
-    		 pieChart.push(catego);
-    		});
     	 
-       var data = google.visualization.arrayToDataTable(pieChart);
-
-       var options = {
-         title: 'My Daily Activities'
-       };
-
-       var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-
-       chart.draw(data, options);
+    	 if($('#subCategory').val() == "" ) {
+	    		 console.log('piechart');
+		    	 var begin = ['Category','value'];
+		    	 pieChart.push(begin);
+		    	 $.each(collectJson, function(i, item) {
+		    		 var catego = new Array( i, Math.abs(collectJson[i]) );
+		    		 pieChart.push(catego);
+		    		});
+		    	 
+		       var data = google.visualization.arrayToDataTable(pieChart);
+		
+		       var options = {
+		         title: 'My Daily Activities'
+		       };
+		       
+		       var chart = new google.visualization.PieChart(document.getElementById('chart'));
+		       chart.draw(data, options);
+    	 } else {
+    		 console.log('autre');
+    		 var begin = ["Element", "Density", { role: "style" } ];
+    		 pieChart.push(begin);
+    		 $.each(collectJson, function(i, item) {
+	    		 var catego = new Array( i, Math.abs(collectJson[i]),  "color: #e5e4e2");
+	    		 pieChart.push(catego);
+	    		});
+    		 
+    		 console.log(pieChart);
+	       var data = google.visualization.arrayToDataTable(pieChart);
+	
+	         var view = new google.visualization.DataView(data);
+	         view.setColumns([0, 1,
+	                          { calc: "stringify",
+	                            sourceColumn: 1,
+	                            type: "string",
+	                            role: "annotation" },
+	                          2]);
+	
+	         var options = {
+	           title: "Dépenses par mois",
+	           width: 600,
+	           height: 400,
+	           bar: {groupWidth: "95%"},
+	           legend: { position: "none" },
+	         };
+	         var chart = new google.visualization.ColumnChart(document.getElementById("chart"));
+	         chart.draw(view, options);
+    	 }
      }
 
 		  

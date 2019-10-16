@@ -1,18 +1,21 @@
 package com.clamaud.compta.controller;
 
+import java.text.DateFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +33,7 @@ import com.clamaud.compta.jpa.repository.AccountCriteria;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 import com.clamaud.compta.jpa.repository.CategoryRepository;
 import com.clamaud.compta.jpa.repository.SubCategoryRepository;
+import com.google.gson.Gson;
 
 @Controller
 public class ComptaDisplayController {
@@ -72,7 +76,7 @@ public class ComptaDisplayController {
 		Iterable<Account> accounts = accountRepository.multiCriteriaSearch(criteria);
 		Date date = accountRepository.findLatestDateAccount();
 		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
-		Map<String, Double> collect = new HashMap<>();
+		LinkedHashMap<String, Double> collect = new LinkedHashMap();
 		double balance = 0.0;
 		if (accountsDTO.size() > 0) {
 			balance = accountsDTO.get(accountsDTO.size() - 1).getBalance();
@@ -81,15 +85,26 @@ public class ComptaDisplayController {
 		if (criteria.getCategory_id() == null) {
 			
 			collect = accountsDTO.stream()
-			.collect(Collectors.groupingBy( AccountDTO::getCategory_Name , Collectors.summingDouble(AccountDTO::getAmount)));
+			.collect(Collectors.groupingBy( AccountDTO::getCategory_Name ,LinkedHashMap::new, Collectors.summingDouble(AccountDTO::getAmount)));
 			
-			System.out.println("ok");
-		} else {
+		} else if (criteria.getSubCategory_id() == null){
 			collect = accountsDTO.stream()
-					.collect(Collectors.groupingBy( AccountDTO::getSubCategory_Name , Collectors.summingDouble(AccountDTO::getAmount)));
+					.collect(Collectors.groupingBy( AccountDTO::getSubCategory_Name, LinkedHashMap::new , Collectors.summingDouble(AccountDTO::getAmount)));
+		} else {
+			int currentMonth = Calendar.getInstance().get(Calendar.MONTH);
+			LinkedHashMap<Integer, Double>	transitions=	accountsDTO.stream()
+					.filter(a -> a.getMonth() >= currentMonth - 4 )
+					.collect(Collectors.toList())
+					.stream().collect(Collectors.groupingBy(AccountDTO::getMonth, LinkedHashMap::new , Collectors.summingDouble(AccountDTO::getAmount)));
+			
+			
+			for (Entry<Integer, Double> entry : transitions.entrySet()) {
+				collect.put(getMonthForInt(entry.getKey()), (double) Math.round(entry.getValue()));
+			}
+			
 		}
-		
-		JSONObject jsonObject = new JSONObject(collect);
+		Gson gson = new Gson();
+		String json = gson.toJson(collect); 
 		
 		model.addAttribute("balance", balance);
 		model.addAttribute("date", date);
@@ -98,7 +113,7 @@ public class ComptaDisplayController {
 		model.addAttribute("categories", categoryRepository.findAll());
 		model.addAttribute("subCategories", subCategoryRepository.findAll());
 		model.addAttribute("accountDTO", new AccountDTO());
-		model.addAttribute("collect", jsonObject);
+		model.addAttribute("collect", json);
 		
 		return "display";
 	}
@@ -206,4 +221,14 @@ public class ComptaDisplayController {
 		}
 		return accountsDTO;
 	}
+	
+	public String getMonthForInt(int num) {
+        String month = "wrong";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11 ) {
+            month = months[num];
+        }
+        return month;
+    }
 }

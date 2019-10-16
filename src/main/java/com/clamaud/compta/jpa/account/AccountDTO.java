@@ -1,5 +1,7 @@
 package com.clamaud.compta.jpa.account;
 
+import java.text.DateFormatSymbols;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.persistence.EnumType;
@@ -162,6 +164,25 @@ public class AccountDTO {
 	public void setSubCategory_id(Integer subCategory_id) {
 		this.subCategory_id = subCategory_id;
 	}
+	
+	public Integer getMonth() {
+		return date.getMonth();
+	}
+	
+	public String getMonthString() {
+		return getMonthForInt(getMonth());
+	}
+	
+	
+	public String getMonthForInt(int num) {
+        String month = "wrong";
+        DateFormatSymbols dfs = new DateFormatSymbols();
+        String[] months = dfs.getMonths();
+        if (num >= 0 && num <= 11 ) {
+            month = months[num];
+        }
+        return month;
+    }
 	
 
 
