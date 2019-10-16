@@ -4,12 +4,15 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -69,10 +72,25 @@ public class ComptaDisplayController {
 		Iterable<Account> accounts = accountRepository.multiCriteriaSearch(criteria);
 		Date date = accountRepository.findLatestDateAccount();
 		List<AccountDTO> accountsDTO = getAccountsWithBalance(accounts);
+		Map<String, Double> collect = new HashMap<>();
 		double balance = 0.0;
 		if (accountsDTO.size() > 0) {
 			balance = accountsDTO.get(accountsDTO.size() - 1).getBalance();
 		}
+		
+		if (criteria.getCategory_id() == null) {
+			
+			collect = accountsDTO.stream()
+			.collect(Collectors.groupingBy( AccountDTO::getCategory_Name , Collectors.summingDouble(AccountDTO::getAmount)));
+			
+			System.out.println("ok");
+		} else {
+			collect = accountsDTO.stream()
+					.collect(Collectors.groupingBy( AccountDTO::getSubCategory_Name , Collectors.summingDouble(AccountDTO::getAmount)));
+		}
+		
+		JSONObject jsonObject = new JSONObject(collect);
+		
 		model.addAttribute("balance", balance);
 		model.addAttribute("date", date);
 		model.addAttribute("accounts", accountsDTO);
@@ -80,6 +98,7 @@ public class ComptaDisplayController {
 		model.addAttribute("categories", categoryRepository.findAll());
 		model.addAttribute("subCategories", subCategoryRepository.findAll());
 		model.addAttribute("accountDTO", new AccountDTO());
+		model.addAttribute("collect", jsonObject);
 		
 		return "display";
 	}

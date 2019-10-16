@@ -141,6 +141,11 @@ public class AccountDTO {
 		
 		return categoryEntity != null ? categoryEntity.getId() : category_id;
 	}
+	
+	public String getCategory_Name() {
+		
+		return categoryEntity != null ? categoryEntity.getCode() : "";
+	}
 
 	public void setCategory_id(Integer category_id) {
 		this.category_id = category_id;
@@ -148,6 +153,10 @@ public class AccountDTO {
 
 	public Integer getSubCategory_id() {
 		return subCategoryEntity != null ? subCategoryEntity.getId() : subCategory_id;
+	}
+	
+	public String getSubCategory_Name() {
+		return subCategoryEntity != null ? subCategoryEntity.getCode() : "";
 	}
 
 	public void setSubCategory_id(Integer subCategory_id) {

@@ -71,40 +71,45 @@
 		</div>
 	</div>
    
-   <div th:fragment="result" class ="col-lg-10 offset-lg-1">  
-      	<table id="list" class="table">
-		    <thead>
-		        <tr>
-		            <th scope="col"> Date </th>
-		            <th scope="col"> Montant </th>
-		            <th scope="col"> Type </th>
-		            <th scope="col"> Code </th>
-		            <th scope="col"> Utilisateur </th>
-		            <th scope="col"> Catégorie </th>
-		            <th scope="col"> Sous catégorie </th>
-		            <th scope="col"> Solde </th>
-		            <th scope="col"> Editer </th>
-		        </tr>
-		    </thead>
-		    <tbody>
-		    <tr th:if="${accounts.empty}">
-		            <td colspan="2"> Pas de compte importé </td>
-		        </tr>
-		        <tr th:each="account : ${accounts}">
-		            <td class="col-lg-1"><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
-		            <td class="col-lg-1"><span th:text="${account.amount}"> Montant </span></td>
-		            <td class="col-lg-1"><span th:text="${account.type}"> Type </span></td>
-		            <td class="col-lg-2"><span th:text="${account.code}"> Code </span></td>
-		            <td class="col-lg-1"><span th:text="${account.user}"> Utilisateur </span></td>
-		            <td class="col-lg-2"><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
-		            <td class="col-lg-2"><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
-		            <td class="col-lg-1"><span th:text="${account.balance}"> Solde </span></td>
-		            <td class="col-lg-1"><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
-		             Edit
-					</button></td>
-		        </tr>
-		    </tbody>
-		</table>
+   <div class ="row">
+	   <div th:fragment="result" class ="col-lg-8">  
+	      	<table id="list" class="table">
+			    <thead>
+			        <tr>
+			            <th scope="col"> Date </th>
+			            <th scope="col"> Montant </th>
+			            <th scope="col"> Type </th>
+			            <th scope="col"> Code </th>
+			            <th scope="col"> Utilisateur </th>
+			            <th scope="col"> Catégorie </th>
+			            <th scope="col"> Sous catégorie </th>
+			            <th scope="col"> Solde </th>
+			            <th scope="col"> Editer </th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			    <tr th:if="${accounts.empty}">
+			            <td colspan="2"> Pas de compte importé </td>
+			        </tr>
+			        <tr th:each="account : ${accounts}">
+			            <td class="col-lg-1"><span th:text="${#dates.format(account.date,'dd/MM/yyyy')}"> Date </span></td>
+			            <td class="col-lg-1"><span th:text="${account.amount}"> Montant </span></td>
+			            <td class="col-lg-1"><span th:text="${account.type}"> Type </span></td>
+			            <td class="col-lg-2"><span th:text="${account.code}"> Code </span></td>
+			            <td class="col-lg-1"><span th:text="${account.user}"> Utilisateur </span></td>
+			            <td class="col-lg-2"><span th:text="${account.categoryEntity?.code}"> Catégorie </span></td>
+			            <td class="col-lg-2"><span th:text="${account.subCategoryEntity?.code}"> Sous catégorie </span></td>
+			            <td class="col-lg-1"><span th:text="${account.balance}"> Solde </span></td>
+			            <td class="col-lg-1"><button type="button" class="btn btn-primary" th:onclick="'edit(\'' + ${account.id} + '\');'">
+			             Edit
+						</button></td>
+			        </tr>
+			    </tbody>
+			</table>
+	    </div>
+	    <div class="col-lg-4">
+	    	<div id="piechart" style="width: 700px; height: 300px;"></div>
+	    </div>
     </div>
     
     <div class="modal fade" id="categoriesUpdateModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -313,6 +318,34 @@
  	    	dateFormat: 'dd/mm/yy'
  	    	});
      }
+     
+     google.charts.load('current', {'packages':['corechart']});
+     google.charts.setOnLoadCallback(drawChart);
+
+     function drawChart() {
+    	 
+    	 var collect = "[[${collect}]]";
+    	 collect = collect.replace(/&quot;/g, "\"");
+    	 var collectJson = JSON.parse(collect);
+    	 var pieChart = new Array();
+    	 var begin = ['Category','value'];
+    	 pieChart.push(begin);
+    	 $.each(collectJson, function(i, item) {
+    		 var catego = new Array( i, Math.abs(collectJson[i]) );
+    		 pieChart.push(catego);
+    		});
+    	 
+       var data = google.visualization.arrayToDataTable(pieChart);
+
+       var options = {
+         title: 'My Daily Activities'
+       };
+
+       var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+       chart.draw(data, options);
+     }
+
 		  
      
 	   
