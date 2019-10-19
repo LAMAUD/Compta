@@ -27,7 +27,7 @@
 						</div>
 						<div class ="col-lg-4 text-center">
 					        <p>Sous Catégorie : 
-					        <select id = "subCategory" th:field="*{subCategory_id}">
+					        <select id = "subCategory" th:field="*{subCategory_id}" >
 					        	<option selected value=""> -- select an option -- </option>
 						    	<option th:each="subCategory : ${subCategories}"
 						            th:value="${subCategory.id}"
@@ -288,6 +288,7 @@
      $(document).ready(function(){
     	 datePicker();
     	 datatable();
+    	 updateSubCategories();
      });
      
      function datatable() {
