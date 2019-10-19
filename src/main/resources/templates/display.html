@@ -194,18 +194,16 @@
     	 $('#categoriesUpdateModal').modal({
     		    show: true
     	}); 
+    	 
      }
      
      function changeSubCategory() {
-    	 console.log("dedans");
     	 $.ajax({
       		  method: "GET",
       		  url: "updateSubCategory",
       		  data: {category: $("#category_id").val(),
       			  id: $('#account_id').val()},
       		  success:function(fragment) {
-      			console.log("SUCCESS");
-      			console.log(fragment);
     			$("#updateCategories").replaceWith(fragment);
       			
       		  }
@@ -221,7 +219,6 @@
     	 var expensesOnly = $('#expensesOnly').val();
     	 var nonCategorised = $('#nonCategorised').val();
     	 
-    	console.log("SAVE");
     	 $('#updateCategories').submit();
     	 
     	 $('#category').val(category);
@@ -324,17 +321,13 @@
      google.charts.setOnLoadCallback(drawChart);
 
      function drawChart() {
-    	 console.log("ici");
-    	 console.log($('#subCategory').val());
     	 
     	 var collect = "[[${collect}]]";
-    	 console.log(collect);
     	 collect = collect.replace(/&quot;/g, "\"");
     	 var collectJson = JSON.parse(collect);
     	 var pieChart = new Array();
     	 
     	 if($('#subCategory').val() == "" ) {
-	    		 console.log('piechart');
 		    	 var begin = ['Category','value'];
 		    	 pieChart.push(begin);
 		    	 $.each(collectJson, function(i, item) {
@@ -351,7 +344,6 @@
 		       var chart = new google.visualization.PieChart(document.getElementById('chart'));
 		       chart.draw(data, options);
     	 } else {
-    		 console.log('autre');
     		 var begin = ["Element", "Density", { role: "style" } ];
     		 pieChart.push(begin);
     		 $.each(collectJson, function(i, item) {
@@ -359,7 +351,6 @@
 	    		 pieChart.push(catego);
 	    		});
     		 
-    		 console.log(pieChart);
 	       var data = google.visualization.arrayToDataTable(pieChart);
 	
 	         var view = new google.visualization.DataView(data);
