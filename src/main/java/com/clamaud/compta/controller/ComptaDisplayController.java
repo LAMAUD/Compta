@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,15 +130,18 @@ public class ComptaDisplayController {
 		
 		Date dateFromFormatted = null;
 		Date dateToFormatted = null;
+		Set<SubCategoryEntity> subCategories = new HashSet<>();
 		
-		CategoryEntity category = categoryRepository.findById(category_id).get();
-		Set<SubCategoryEntity> subCategories = category.getSubCategories();
+		if (category_id != null) {
+			CategoryEntity category = categoryRepository.findById(category_id).get();
+			subCategories = category.getSubCategories();
+		}
 		
 		if (!StringUtils.isEmpty(dateFrom) && dateFrom !=null) {
 			dateFromFormatted =new SimpleDateFormat("dd/MM/yyyy").parse(dateFrom);  
 		}
 		
-		if (!StringUtils.isEmpty(dateFrom) && dateTo != null) {
+		if (!StringUtils.isEmpty(dateTo) && dateTo != null) {
 			dateToFormatted =new SimpleDateFormat("dd/MM/yyyy").parse(dateTo);
 		}
 		
@@ -197,8 +201,8 @@ public class ComptaDisplayController {
 		account.setSubCategoryEntity(subCategory);
 		
 		List<AccountDTO> accountsDTO = new ArrayList<AccountDTO>();
-		model.addAttribute("accounts", accountsDTO);
 		accountRepository.save(account);
+		model.addAttribute("accounts", accountsDTO);
 		
 		return "display :: result";
 	}
