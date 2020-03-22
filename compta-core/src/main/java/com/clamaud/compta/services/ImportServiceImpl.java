@@ -1,4 +1,4 @@
-package com.clamaud.compta.jpa.service;
+package com.clamaud.compta.services;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.clamaud.compta.jpa.account.Account;
+import com.clamaud.compta.entity.Account;
 
 @Service
 public class ImportServiceImpl implements ImportService {

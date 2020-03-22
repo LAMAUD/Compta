@@ -17,15 +17,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.clamaud.compta.jpa.account.Account;
-import com.clamaud.compta.jpa.account.AccountDTO;
-import com.clamaud.compta.jpa.account.Category;
-import com.clamaud.compta.jpa.account.CategoryDTO;
-import com.clamaud.compta.jpa.account.CategoryEntity;
-import com.clamaud.compta.jpa.account.CategorySubCategoryDTO;
-import com.clamaud.compta.jpa.account.CategoryUtils;
-import com.clamaud.compta.jpa.account.SubCategoryDTO;
-import com.clamaud.compta.jpa.account.SubCategoryEntity;
+import com.clamaud.compta.dto.AccountDTO;
+import com.clamaud.compta.dto.CategoryDTO;
+import com.clamaud.compta.dto.CategorySubCategoryDTO;
+import com.clamaud.compta.dto.SubCategoryDTO;
+import com.clamaud.compta.entity.Account;
+import com.clamaud.compta.entity.Category;
+import com.clamaud.compta.entity.CategoryEntity;
+import com.clamaud.compta.entity.SubCategoryEntity;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 import com.clamaud.compta.jpa.repository.CategoryRepository;
 import com.clamaud.compta.jpa.repository.SubCategoryRepository;
@@ -64,7 +63,6 @@ public class CategoryController {
 		if (accountsToSend.isEmpty()) {
 			return "index";
 		}
-		model.addAttribute("category", Category.MAISON);
 		model.addAttribute("account", accountsToSend.get(0));
 		return "category";
 	}

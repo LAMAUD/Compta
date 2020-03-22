@@ -1,7 +1,7 @@
-package com.clamaud.compta.jpa.account;
+package com.clamaud.compta.entity;
 
 public enum Category {
-
+	
 	MAISON,
 	NOURRITURE,
 	LOISIRS,
@@ -13,6 +13,5 @@ public enum Category {
 	SANTE,
 	CHAT,
 	VOITURE;
-	
-	
+
 }

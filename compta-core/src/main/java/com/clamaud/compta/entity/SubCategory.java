@@ -1,6 +1,7 @@
-package com.clamaud.compta.jpa.account;
+package com.clamaud.compta.entity;
 
 public enum SubCategory {
+
 	
 	TRAVAUX(Category.MAISON.toString()),
 	MEUBLES(Category.MAISON.toString()),
@@ -48,6 +49,4 @@ public enum SubCategory {
 		this.category = category;
 	}
 	
-	
-
 }

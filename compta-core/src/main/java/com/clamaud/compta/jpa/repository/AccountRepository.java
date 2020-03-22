@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.clamaud.compta.jpa.account.Account;
+import com.clamaud.compta.entity.Account;
 
 public interface AccountRepository extends CrudRepository<Account, Integer> {
 

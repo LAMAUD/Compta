@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.clamaud.compta.jpa.account.Account;
-import com.clamaud.compta.jpa.account.UploadForm;
-import com.clamaud.compta.jpa.service.AccountService;
-import com.clamaud.compta.jpa.service.ImportService;
+import com.clamaud.compta.entity.Account;
+import com.clamaud.compta.entity.UploadForm;
+import com.clamaud.compta.services.AccountService;
+import com.clamaud.compta.services.ImportService;
+
 
 
 @Controller

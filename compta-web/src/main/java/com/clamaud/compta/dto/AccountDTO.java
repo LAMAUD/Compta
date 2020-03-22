@@ -1,13 +1,15 @@
-package com.clamaud.compta.jpa.account;
+package com.clamaud.compta.dto;
 
 import java.text.DateFormatSymbols;
-import java.time.ZoneId;
 import java.util.Date;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 import org.springframework.format.annotation.DateTimeFormat;
+
+import com.clamaud.compta.entity.Category;
+import com.clamaud.compta.entity.SubCategory;
 
 public class AccountDTO {
 	

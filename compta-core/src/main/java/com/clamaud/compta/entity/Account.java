@@ -1,4 +1,4 @@
-package com.clamaud.compta.jpa.account;
+package com.clamaud.compta.entity;
 
 import java.util.Date;
 
@@ -102,14 +102,15 @@ public class Account {
 	@Enumerated(EnumType.STRING)
 	private Category category;
 	
+	@Enumerated(EnumType.STRING)
+	private SubCategory subCategory;
+	
+	
 	@ManyToOne
 	private CategoryEntity categoryEntity;
 	
 	@ManyToOne	
 	private SubCategoryEntity subCategoryEntity;
-	
-	@Enumerated(EnumType.STRING)
-	private SubCategory subCategory;
 	
 	
 	public Account() {
@@ -213,21 +214,6 @@ public class Account {
 		this.user = user;
 	}
 
-	public Category getCategory() {
-		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
-	}
-
-	public SubCategory getSubCategory() {
-		return subCategory;
-	}
-
-	public void setSubCategory(SubCategory subCategory) {
-		this.subCategory = subCategory;
-	}
 
 	public CategoryEntity getCategoryEntity() {
 		return categoryEntity;
@@ -251,6 +237,22 @@ public class Account {
 
 	public void setImportDate(Date importDate) {
 		this.importDate = importDate;
+	}
+
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
+	}
+
+	public SubCategory getSubCategory() {
+		return subCategory;
+	}
+
+	public void setSubCategory(SubCategory subCategory) {
+		this.subCategory = subCategory;
 	}
 	
 }

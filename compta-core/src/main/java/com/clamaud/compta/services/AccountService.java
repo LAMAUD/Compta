@@ -1,8 +1,8 @@
-package com.clamaud.compta.jpa.service;
+package com.clamaud.compta.services;
 
 import java.util.List;
 
-import com.clamaud.compta.jpa.account.Account;
+import com.clamaud.compta.entity.Account;
 
 public interface AccountService {
 	

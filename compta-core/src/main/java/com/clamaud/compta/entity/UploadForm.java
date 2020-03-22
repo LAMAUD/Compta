@@ -1,4 +1,4 @@
-package com.clamaud.compta.jpa.account;
+package com.clamaud.compta.entity;
 
 import org.springframework.web.multipart.MultipartFile;
 

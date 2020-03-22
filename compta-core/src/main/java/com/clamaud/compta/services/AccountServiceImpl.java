@@ -1,4 +1,4 @@
-package com.clamaud.compta.jpa.service;
+package com.clamaud.compta.services;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -10,9 +10,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.clamaud.compta.jpa.account.Account;
-import com.clamaud.compta.jpa.account.CategoryEntity;
-import com.clamaud.compta.jpa.account.SubCategoryEntity;
+import com.clamaud.compta.entity.Account;
+import com.clamaud.compta.entity.CategoryEntity;
+import com.clamaud.compta.entity.SubCategoryEntity;
 import com.clamaud.compta.jpa.repository.AccountRepository;
 
 @Service
