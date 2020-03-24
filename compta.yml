@@ -1,0 +1,142 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mysql
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: compta
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+
+      
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mysql
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+    spec:
+      nodeSelector: 
+        kubernetes.io/hostname: cla-worker1
+      containers:
+      - name: mysql
+        image: mysql:8.0.16
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: example
+        - name: MYSQL_DATABASE
+          value: compta
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+      serviceAccountName: mysql
+      initContainers:
+      - name: init-myservice
+        image: busybox:1.28
+        command: ['sh', '-c', 'sleep 4;']
+      volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pv-claim
+
+# --- 
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: mysql
+# spec:
+#   selector:
+#     app: mysql
+#   type: NodePort
+#   ports:
+#   - port: 3306
+#     targetPort: 3306
+#     nodePort: 31005
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compta
+  template:
+    metadata:
+      labels:
+        app: compta
+      annotations:
+        "consul.hashicorp.com/connect-inject": "true"
+        "consul.hashicorp.com/connect-service-upstreams": "mysql:1234"
+    spec:
+      containers:
+      - name: compta
+        image: clamaud/compta:1.4
+        env:
+        - name: K8S_MYSQL_DB_HOST
+          value: 127.0.0.1:1234
+        ports:
+        - containerPort: 8080
+      serviceAccountName: compta
+
+# ---
+
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: compta-it
+# spec:
+#   selector:
+#     app: compta
+#   type: NodePort
+#   ports:
+#   - port: 8080
+#     targetPort: 8080
+#     nodePort: 31006
+
+--- 
+
