@@ -111,17 +111,30 @@ spec:
         app: compta
       annotations:
         "consul.hashicorp.com/connect-inject": "true"
-        "consul.hashicorp.com/connect-service-upstreams": "mysql:1234"
+        "consul.hashicorp.com/connect-service-upstreams": "mysql:1234,apm-server:8200"
+        # "consul.hashicorp.com/service-tags": "traefik.enable=true"
     spec:
       containers:
       - name: compta
-        image: clamaud/compta:1.4
+        image: clamaud/compta:1.8
         env:
         - name: K8S_MYSQL_DB_HOST
           value: 127.0.0.1:1234
         ports:
         - containerPort: 8080
+        volumeMounts:
+        - name: config
+          mountPath: /root/properties/
+        - name: config-tpl
+          mountPath: /root/autre/
       serviceAccountName: compta
+      volumes:
+      - name: config
+        configMap: 
+          name: compta-config
+      - name: config-tpl
+        configMap: 
+          name: compta-config-tpl
 
 # ---
 
@@ -139,4 +152,30 @@ spec:
 #     nodePort: 31006
 
 --- 
+
+apiVersion: v1
+data:
+  config.tpl: |
+    #{
+      #	"max-connections": {{ key "compta/config/test" }},
+      #	"timeout": {{ key "compta/config/plop" }},
+    #}
+kind: ConfigMap
+metadata:
+  name: compta-config
+  namespace: default
+
+---
+
+apiVersion: v1
+data:
+  config.json: |
+      {
+      {{ range ls "compta/config" }}
+          "{{ .Key }}": {{ .Value }},{{ end }}
+      }
+kind: ConfigMap
+metadata:
+  name: compta-config-tpl
+  namespace: default
 
