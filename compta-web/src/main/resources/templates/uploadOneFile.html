@@ -11,7 +11,7 @@
        
       <!-- MyUploadForm -->
        
-      <form th:object="${uploadForm}" method="POST"
+      <form th:object="${uploadForm}" method="POST" th:action="@{/uploadOneFile}"
          action="" enctype="multipart/form-data">
          Description:
          <br>
