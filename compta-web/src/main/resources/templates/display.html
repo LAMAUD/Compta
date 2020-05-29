@@ -180,7 +180,6 @@
 		
      
      function edit(id){
-    	
     	 $.ajax({
    		  method: "GET",
    		  url: "account",
@@ -216,9 +215,9 @@
     	 var subCategory = $('#subCategory').val();
     	 var dateFrom = $('#dateFrom').val();
     	 var dateTo = $('#dateTo').val();
-    	 var expensesOnly = $('#expensesOnly').val();
-    	 var nonCategorised = $('#nonCategorised').val();
-    	 
+    	 var expensesOnly = $('#expensesOnly').is(':checked');
+    	 var nonCategorised = $('#nonCategorised').is(':checked');
+    	
     	 $('#updateCategories').submit();
     	 
     	 $('#category').val(category);
@@ -266,6 +265,7 @@
      
      
 	   function updateSubCategories(){
+		   
 		   $.ajax({
 	    		  method: "GET",
 	    		  url: "updateSubCategories",
@@ -273,7 +273,7 @@
 	    			  subCategory: $("#subCategory").val(),
 	    			  dateFrom: $("#dateFrom").val(),
 	    			  dateTo: $("#dateTo").val(),
-	    			  expensesOnly: $("#expensesOnly").val()},
+	    			  expensesOnly: $("#expensesOnly").is(':checked')},
 	    		  success:function(fragment) {
 	    		        $("#accountForm").replaceWith(fragment);
 	    		        datePicker();
@@ -321,7 +321,6 @@
      google.charts.setOnLoadCallback(drawChart);
 
      function drawChart() {
-    	 
     	 var collect = "[[${collect}]]";
     	 collect = collect.replace(/&quot;/g, "\"");
     	 var collectJson = JSON.parse(collect);
