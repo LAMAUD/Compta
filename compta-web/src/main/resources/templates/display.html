@@ -179,6 +179,42 @@
      <script>
 		
      
+     var page_result = 0;
+     var info_page;
+     
+     function ajax1(){
+    	 return $.ajax({
+    		  method: "GET",
+    		  url: "updateAccountCategories",
+    		  data: {category: $("#category_id").val(), subCategory: $("#subCategory_id").val(), id: $('#account_id').val()},
+    		  success:function(fragment) {
+  			    $("#updateCategories").replaceWith(fragment);
+    			
+    		  }
+    	 });
+    	 
+    	
+     }
+     
+     function save(){
+    	 
+    	 $.when(ajax1()).done(function(){
+    		 $(function () {
+   	   		   $('#categoriesUpdateModal').modal('toggle');
+   	   	     });
+    		 page_result = info_page.page();
+        	 reload();
+         });
+    	 
+	 }
+     
+     function reload(){
+    	 $('#accountForm').submit();
+     }
+     
+     
+     
+    
      function edit(id){
     	 $.ajax({
    		  method: "GET",
@@ -209,31 +245,7 @@
       		});
      }
      
-     function save(){
-    	      
-    	 var category = $('#category').val();
-    	 var subCategory = $('#subCategory').val();
-    	 var dateFrom = $('#dateFrom').val();
-    	 var dateTo = $('#dateTo').val();
-    	 var expensesOnly = $('#expensesOnly').is(':checked');
-    	 var nonCategorised = $('#nonCategorised').is(':checked');
-    	
-    	 $('#updateCategories').submit();
-    	 
-    	 $('#category').val(category);
-    	 $('#subCategory').val(subCategory);
-    	 $('#dateFrom').val(dateFrom);
-    	 $('#dateTo').val(dateTo);
-    	 $('#expensesOnly').val(expensesOnly);
-    	 $('#nonCategorised').val(nonCategorised);
-    	 
-    	 $('#accountForm').submit();
-    	 
-    	 $(function () {
-    		   $('#categoriesUpdateModal').modal('toggle');
-    	});
-    	 
-     }
+     
      
      jQuery.extend( jQuery.fn.dataTableExt.oSort, {
     	    "date-euro-pre": function ( a ) {
@@ -283,13 +295,15 @@
 	   
 	   
      $(document).ready(function(){
+    	 console.log(page_result);
     	 datePicker();
-    	 datatable();
+    	 info_page = datatable().page(page_result).draw( 'page' );
     	 updateSubCategories();
+    	 page_result=0;
      });
      
      function datatable() {
-		$('#list').DataTable({
+    	 var table_result = $('#list').DataTable({
     		 
     	     columnDefs: [
     	         { type: 'date-euro', targets: 0, orderable: true },
@@ -298,6 +312,7 @@
     	       searching: false,
     	       
     	    });
+    	 return table_result;
      }
      
      function datePicker(){

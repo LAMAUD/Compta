@@ -2,7 +2,7 @@ version: '3.3'
 
 services: 
   myapp:
-    image: clamaud/compta:1.4
+    image: clamaud/compta:1.6
     environment:
     - K8S_MYSQL_DB_HOST=mysql
     ports:

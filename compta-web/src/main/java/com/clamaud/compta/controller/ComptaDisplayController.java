@@ -187,22 +187,28 @@ public class ComptaDisplayController {
 		return "display :: formEditPopup";
 	}
 	
-	@PostMapping("/updateAccountCategories")
-	public String updateAccount(Model model, @ModelAttribute AccountDTO accountDTO) {
+	@GetMapping("/updateAccountCategories")
+	public String updateAccount(Model model, @RequestParam("id") Integer id, @RequestParam("category") Integer category_id, @RequestParam("subCategory") Integer subCategory_id) {
 		System.out.println("------------------------------------------ DEDANS ------------------------------------------");
 		
-		Account account = accountRepository.findById(accountDTO.getId()).get();
-		CategoryEntity category = categoryRepository.findById(accountDTO.getCategory_id()).get();
-		SubCategoryEntity subCategory = subCategoryRepository.findById(accountDTO.getSubCategory_id()).get();
+		Account account = accountRepository.findById(id).get();
+		CategoryEntity category = categoryRepository.findById(category_id).get();
+		SubCategoryEntity subCategory = subCategoryRepository.findById(subCategory_id).get();
 		
 		account.setCategoryEntity(category);
 		account.setSubCategoryEntity(subCategory);
-		
-		List<AccountDTO> accountsDTO = new ArrayList<AccountDTO>();
+		Set<SubCategoryEntity> subCategories = category.getSubCategories();
 		accountRepository.save(account);
-		model.addAttribute("accounts", accountsDTO);
 		
-		return "display :: result";
+		AccountDTO accountDTO = modelMapper.map(account, AccountDTO.class);
+		model.addAttribute("categories", categoryRepository.findAll());
+		
+		model.addAttribute("subCategories", subCategories);
+		
+		model.addAttribute("accountDTO", accountDTO);
+		
+		
+		return "display :: formEditPopup";
 	}
 	
 	private AccountDTO convertToDto(Account account) {
