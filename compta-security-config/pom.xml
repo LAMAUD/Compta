@@ -9,7 +9,7 @@
   
   <properties>
     	<commons-lang.version>3.6</commons-lang.version>
-	    <guava.version>25.0-jre</guava.version>
+	    <guava.version>29.0-jre</guava.version>
     </properties>
   
   <dependencies>
